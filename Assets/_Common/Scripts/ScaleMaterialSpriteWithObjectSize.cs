@@ -32,7 +32,7 @@ namespace Com.Github.Knose1.Common
 			if (m_material != null)
 				materialClone = new Material(m_material);
 
-			MeshRenderer renderer = GetComponent<MeshRenderer>();
+			renderer = GetComponent<MeshRenderer>();
 		}
 
 		private void Update()

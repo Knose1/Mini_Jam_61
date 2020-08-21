@@ -64,9 +64,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\_Common\Scripts\ScaleMaterialSpriteWithObjectSize.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\ColorSettings.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Grid.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Piece.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Base\Piece.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Grid.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Cube.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Pyramide.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\Settings\ColorSettings.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.0f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
