@@ -2,17 +2,63 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScaleMaterialSpriteWithObjectSize : MonoBehaviour
+namespace Com.Github.Knose1.Common
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	[ExecuteInEditMode]
+	[RequireComponent(typeof(MeshRenderer))]
+	public class ScaleMaterialSpriteWithObjectSize : MonoBehaviour
+	{
+		public enum TransformScale
+		{
+			Local,
+			Lossy
+		}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+		[SerializeField] protected List<string> m_textures = new List<string>();
+		[SerializeField] protected Material m_material = null;
+		[SerializeField] protected float m_scale = 1;
+		[SerializeField] protected TransformScale m_transformScale;
+
+		protected Material materialClone = null;
+		new protected MeshRenderer renderer = null;
+
+		private void OnValidate()
+		{
+			Start();
+		}
+
+		private void Start()
+		{
+			if (m_material != null)
+				materialClone = new Material(m_material);
+
+			MeshRenderer renderer = GetComponent<MeshRenderer>();
+		}
+
+		private void Update()
+		{
+			if (materialClone == null) return;
+
+			materialClone.CopyPropertiesFromMaterial(m_material);
+
+			Vector2 transformScale = default;
+			switch (m_transformScale)
+			{
+				case TransformScale.Local:
+					transformScale = transform.localScale;
+					break;
+				case TransformScale.Lossy:
+					transformScale = transform.lossyScale;
+					break;
+			}
+
+			Vector2 scale = new Vector2(transformScale.x * m_scale, transformScale.y * m_scale);
+			for (int i = 0; i < m_textures.Count; i++)
+			{
+				materialClone.SetTextureScale(m_textures[i], scale);
+			}
+
+			renderer.material = materialClone;
+		}
+	}
 }
