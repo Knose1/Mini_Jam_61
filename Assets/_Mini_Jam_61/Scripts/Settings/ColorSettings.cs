@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Com.Github.Knose1.MiniJam61
+namespace Com.Github.Knose1.MiniJam61.Settings
 {
 	[CreateAssetMenu(fileName=nameof(ColorSettings), menuName=nameof(MiniJam61)+"/"+nameof(ColorSettings))]
 	public class ColorSettings : ScriptableObject

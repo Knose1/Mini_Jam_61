@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Com.Github.Knose1.MiniJam61.Game.Base;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

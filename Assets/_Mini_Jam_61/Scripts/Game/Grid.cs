@@ -8,6 +8,7 @@ namespace Com.Github.Knose1.MiniJam61
 	{
 		[SerializeField] protected Vector2Int m_size;
 		[SerializeField] protected Transform m_board;
+		[SerializeField] protected Transform m_pieces;
 
 		private void OnValidate()
 		{

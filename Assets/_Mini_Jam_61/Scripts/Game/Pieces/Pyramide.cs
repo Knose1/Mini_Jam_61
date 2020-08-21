@@ -1,4 +1,6 @@
-﻿namespace Com.Github.Knose1.MiniJam61.Game.Pieces
+﻿using Com.Github.Knose1.MiniJam61.Game.Base;
+
+namespace Com.Github.Knose1.MiniJam61.Game.Pieces
 {
 	public class Pyramide : Piece
 	{

@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Com.Github.Knose1.MiniJam61.Settings;
 
-namespace Com.Github.Knose1.MiniJam61
+namespace Com.Github.Knose1.MiniJam61.Game.Base
 {
 	[ExecuteInEditMode]
 	[RequireComponent(typeof(MeshRenderer))]
 	public class Piece : MonoBehaviour
 	{
-		public enum PieceType
+		public enum PieceTeam
 		{
 			Player,
 			Opponent
@@ -16,7 +17,13 @@ namespace Com.Github.Knose1.MiniJam61
 
 		[SerializeField] protected List<string> m_colors = new List<string>();
 		[SerializeField] protected Material m_material = default;
-		[SerializeField] protected PieceType m_pieceType = default;
+		[SerializeField] protected PieceTeam m_team = default;
+		public PieceTeam Team 
+		{
+			get => m_team;
+			set => m_team = value;
+		}
+
 		[SerializeField] protected ColorSettings m_settings = default;
 		
 
@@ -43,12 +50,12 @@ namespace Com.Github.Knose1.MiniJam61
 			materialClone.CopyPropertiesFromMaterial(m_material);
 
 			Color c = default;
-			switch (m_pieceType)
+			switch (m_team)
 			{
-				case PieceType.Player:
+				case PieceTeam.Player:
 					c = m_settings.PlayerColor;
 					break;
-				case PieceType.Opponent:
+				case PieceTeam.Opponent:
 					c = m_settings.OpponentColor;
 					break;
 			}
