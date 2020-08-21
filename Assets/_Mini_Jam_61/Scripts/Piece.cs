@@ -46,15 +46,16 @@ namespace Com.Github.Knose1.MiniJam61
 			switch (m_pieceType)
 			{
 				case PieceType.Player:
-					c = m_settings.
+					c = m_settings.PlayerColor;
 					break;
 				case PieceType.Opponent:
+					c = m_settings.OpponentColor;
 					break;
 			}
 
 			for (int i = 0; i < m_colors.Count; i++)
 			{
-				materialClone.SetColor(m_colors[i], scale);
+				materialClone.SetColor(m_colors[i], c);
 			}
 
 			renderer.material = materialClone;
