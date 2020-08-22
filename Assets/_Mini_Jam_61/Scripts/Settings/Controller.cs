@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Com.Github.Knose1.MiniJam61.Game
+namespace Com.Github.Knose1.MiniJam61.Settings
 {
+	[CreateAssetMenu(fileName = nameof(Controller), menuName = nameof(MiniJam61) + "/" + nameof(Controller))]
 	public class Controller : ScriptableObject
 	{
 		[SerializeField] protected string m_mouseX = "Mouse X";

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Com.Github.Knose1.MiniJam61.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,8 @@ namespace Com.Github.Knose1.MiniJam61.Game
 {
 	public class PlayerCamera : MonoBehaviour
 	{
+		public event Action<RaycastHit> OnRay;
+
 		private const int ADD_RAY_DISTANCE = 10;
 		[SerializeField] private Controller m_controller = null;
 		[SerializeField] protected Camera m_camera;
@@ -16,16 +19,13 @@ namespace Com.Github.Knose1.MiniJam61.Game
 		[SerializeField] protected Transform m_cameraRotationLeft;
 		[SerializeField] protected float m_cameraSpeed = 20;
 
-		[SerializeField] protected string m_mouseX = "Mouse X";
-		[SerializeField] protected string m_mouseY = "Mouse Y";
-		[SerializeField] protected string m_mouseLeftClick = "Fire1";
-		[SerializeField] protected string m_mouseRightClick = "Fire2";
-
 		private Action doAction;
 
 		[SerializeField] protected Vector2 rotation = default;
 		[SerializeField] protected Vector2 m_minRotation = default;
 		[SerializeField] protected Vector2 m_maxRotation = default;
+
+		[SerializeField] protected LayerMask m_layerMask = default;
 
 		public Controller Controller => m_controller;
 
@@ -42,11 +42,15 @@ namespace Com.Github.Knose1.MiniJam61.Game
 		public void SetStateNormal() => doAction = DoActionNormal;
 		private void DoActionNormal()
 		{
-			if (Input.GetButtonUp(m_mouseLeftClick))
+			if (m_controller.MouseLeftClick)
 			{
-				Ray();
+				RaycastHit? hit = Ray();
+				if (hit.HasValue)
+				{
+					OnRay(hit.Value);
+				}
 			}
-			else if (Input.GetButton(m_mouseRightClick))
+			else if (m_controller.MouseRightPressed)
 			{
 				Rotate();
 			}
@@ -59,8 +63,7 @@ namespace Com.Github.Knose1.MiniJam61.Game
 		private void Rotate()
 		{
 			float speed = Time.deltaTime * m_cameraSpeed;
-			rotation.x += Input.GetAxis(m_mouseX) * speed;
-			rotation.y += Input.GetAxis(m_mouseY) * speed;
+			rotation += m_controller.MouseMove * speed;
 
 			rotation.x %= 360;
 			rotation.y %= 360;
@@ -72,10 +75,15 @@ namespace Com.Github.Knose1.MiniJam61.Game
 			m_cameraRotationLeft.localRotation = Quaternion.AngleAxis(rotation.y, Vector3.left);
 		}
 
-		private void Ray()
+		private RaycastHit? Ray()
 		{
 			float cameraRadius = -m_camera.transform.localPosition.z;
-			Physics.Raycast(m_camera.ScreenPointToRay(Input.mousePosition), ADD_RAY_DISTANCE + cameraRadius);
+			if (Physics.Raycast(m_camera.ScreenPointToRay(Input.mousePosition), out RaycastHit hitInfo , ADD_RAY_DISTANCE + cameraRadius, m_layerMask)) 
+			{
+				return hitInfo;
+			}
+
+			return null;
 		}
 	}
 }

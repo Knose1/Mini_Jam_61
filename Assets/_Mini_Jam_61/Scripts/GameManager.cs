@@ -1,4 +1,6 @@
 ﻿using Com.Github.Knose1.MiniJam61.Game;
+using Com.Github.Knose1.MiniJam61.Game.Base;
+using Com.Github.Knose1.MiniJam61.Settings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,7 +20,6 @@ namespace Com.Github.Knose1.MiniJam61
 		public delegate bool OnEndDelegate(PieceTeam winner);
 		public static event OnEndDelegate OnEnd;
 
-		[SerializeField] private Controller m_controller = null;
 		[SerializeField] private PlayerCamera m_playerCamera = null;
 		[SerializeField] private Grid m_grid = null;
 		Action doAction;
@@ -26,7 +27,17 @@ namespace Com.Github.Knose1.MiniJam61
 
 		private void Awake()
 		{
-			doAction = DoActionVoid;
+			doAction = DoTurn;
+			m_playerCamera.OnRay += PlayerCamera_OnRay;
+		}
+
+		private void PlayerCamera_OnRay(RaycastHit obj)
+		{
+			Piece piece = obj.transform.GetComponent<Piece>();
+			if (piece)
+			{
+				//piece.GetMouvement();
+			}
 		}
 
 		private void Start()
