@@ -5,16 +5,12 @@ using Com.Github.Knose1.MiniJam61.Settings;
 
 namespace Com.Github.Knose1.MiniJam61.Game.Base
 {
+
 	[ExecuteInEditMode]
 	[RequireComponent(typeof(MeshRenderer))]
 	public class Piece : MonoBehaviour
 	{
-		public enum PieceTeam
-		{
-			Player,
-			Opponent
-		}
-
+		
 		[SerializeField] protected List<string> m_colors = new List<string>();
 		[SerializeField] protected Material m_material = default;
 		[SerializeField] protected PieceTeam m_team = default;
@@ -41,6 +37,9 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 				materialClone = new Material(m_material);
 
 			renderer = GetComponent<MeshRenderer>();
+
+			if (m_team == PieceTeam.Player)		transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
+			if (m_team == PieceTeam.Opponent)	transform.rotation = Quaternion.AngleAxis(0, Vector3.up);
 		}
 
 		private void Update()
@@ -52,11 +51,11 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 			Color c = default;
 			switch (m_team)
 			{
-				case PieceTeam.Player:
-					c = m_settings.PlayerColor;
-					break;
 				case PieceTeam.Opponent:
 					c = m_settings.OpponentColor;
+					break;
+				case PieceTeam.Player:
+					c = m_settings.PlayerColor;
 					break;
 			}
 

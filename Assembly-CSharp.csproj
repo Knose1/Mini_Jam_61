@@ -66,6 +66,7 @@
     <Compile Include="Assets\_Common\Scripts\ScaleMaterialSpriteWithObjectSize.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Base\Piece.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Grid.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\PieceTeam.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Cube.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Pyramide.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\GameManager.cs" />
