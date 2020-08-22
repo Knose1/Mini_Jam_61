@@ -79,6 +79,7 @@
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Settings\ColorSettings.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Settings\Controller.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\UI\PiecePlacingUI.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\UI\UIContainer.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.0f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
