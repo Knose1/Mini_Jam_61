@@ -22,6 +22,11 @@ namespace Com.Github.Knose1.MiniJam61
 
 		[SerializeField] private PlayerCamera m_playerCamera = null;
 		[SerializeField] private Grid m_grid = null;
+
+		[SerializeField] private Piece m_cubePrefab;
+		[SerializeField] private Piece m_trianglePrefab;
+		[SerializeField] private Piece m_octahedronPrefab;
+
 		Action doAction;
 		PieceTeam currentTurn;
 
@@ -36,7 +41,15 @@ namespace Com.Github.Knose1.MiniJam61
 			Piece piece = obj.transform.GetComponent<Piece>();
 			if (piece)
 			{
+				//Move a piece
+
 				//piece.GetMouvement();
+			}
+			else
+			{
+				//Place a piece
+				doAction = null;
+
 			}
 		}
 
@@ -48,10 +61,9 @@ namespace Com.Github.Knose1.MiniJam61
 		private void Update()
 		{
 			m_playerCamera.Controller.UpdateControles();
-			doAction();
+			doAction?.Invoke();
 		}
 
-		private void DoActionVoid(){}
 		private void DoTurn()
 		{
 			m_playerCamera.ManualUpdate();
