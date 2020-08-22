@@ -65,10 +65,12 @@
   <ItemGroup>
     <Compile Include="Assets\_Common\Scripts\ScaleMaterialSpriteWithObjectSize.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Base\Piece.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Controller.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Grid.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\PieceTeam.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Cube.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Pyramide.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\PlayerCamera.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\GameManager.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Settings\ColorSettings.cs" />
     <Reference Include="UnityEngine">
@@ -611,6 +613,15 @@
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.ProBuilder">
+      <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.ProBuilder.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.ProBuilder.Editor">
+      <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.ProBuilder.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.ProBuilder.AssetIdRemapUtility">
+      <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.ProBuilder.AssetIdRemapUtility.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.2D.SpriteShape.Editor">
       <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.2D.SpriteShape.Editor.dll</HintPath>
     </Reference>
@@ -665,6 +676,9 @@
     <Reference Include="Unity.2D.Animation.Editor">
       <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.2D.Animation.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.ProBuilder.AddOns.Editor">
+      <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.ProBuilder.AddOns.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Mathematics.Editor">
       <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.Mathematics.Editor.dll</HintPath>
     </Reference>
@@ -679,18 +693,6 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ProBuilder">
-      <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.ProBuilder.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ProBuilder.Editor">
-      <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.ProBuilder.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ProBuilder.AssetIdRemapUtility">
-      <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.ProBuilder.AssetIdRemapUtility.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ProBuilder.AddOns.Editor">
-      <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/Unity.ProBuilder.AddOns.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup></ItemGroup>
