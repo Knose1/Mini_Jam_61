@@ -30,7 +30,7 @@ namespace Com.Github.Knose1.MiniJam61
 		public void PlaceObj(Transform piece, Vector2Int pos)
 		{
 			piece.SetParent(m_piece_container);
-			piece.transform.localPosition = new Vector3(-pos.x, 0, -pos.y);
+			piece.transform.localPosition = GridToWorld(pos);
 		}
 		public void PlacePiece(Piece piece, Vector2Int pos) 
 		{

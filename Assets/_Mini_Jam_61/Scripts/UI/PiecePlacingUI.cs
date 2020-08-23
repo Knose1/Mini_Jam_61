@@ -36,8 +36,6 @@ namespace Com.Github.Knose1.MiniJam61.UI
 
 		public void Show(Action<PlacingInput> onInput, PlacingInput allowedInputs, GameTeam currentPlayer)
 		{
-			//TODO: disable buttons depending on allowedInputs
-
 			UIContainer.Instance.Add(gameObject, true, UIContainer.ActionOnClose.unactivate);
 
 			this.onInput = onInput;
@@ -46,6 +44,10 @@ namespace Com.Github.Knose1.MiniJam61.UI
 			m_cubeBtn.onClick.AddListener(CubeBtn_OnClick);
 			m_pyramideBtn.onClick.AddListener(PyramideBtn_OnClick);
 			m_octahedronBtn.onClick.AddListener(OctahedronBtn_OnClick);
+
+			m_cubeBtn.interactable			= (allowedInputs & PlacingInput.Cube) == PlacingInput.Cube;
+			m_pyramideBtn.interactable 		= (allowedInputs & PlacingInput.Pyramide) == PlacingInput.Pyramide;
+			m_octahedronBtn.interactable 	= (allowedInputs & PlacingInput.Octahedron) == PlacingInput.Octahedron;
 
 			Color c = default;
 			switch (currentPlayer)
@@ -61,6 +63,17 @@ namespace Com.Github.Knose1.MiniJam61.UI
 			m_background.color = c;
 		}
 
+		public void Hide()
+		{
+			UIContainer.Instance.Close(gameObject);
+
+			doAction = null;
+			onInput = null;
+
+			m_cubeBtn.onClick.RemoveListener(CubeBtn_OnClick);
+			m_pyramideBtn.onClick.RemoveListener(PyramideBtn_OnClick);
+			m_octahedronBtn.onClick.RemoveListener(OctahedronBtn_OnClick);
+		}
 
 		private void CubeBtn_OnClick() => SendOnInputAndSleep(PlacingInput.Cube);
 		private void PyramideBtn_OnClick() => SendOnInputAndSleep(PlacingInput.Pyramide);
@@ -77,14 +90,7 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		{
 			var _temp = onInput;
 
-			UIContainer.Instance.Close(gameObject);
-
-			doAction = null;
-			onInput = null;
-
-			m_cubeBtn.onClick.RemoveListener(CubeBtn_OnClick);
-			m_pyramideBtn.onClick.RemoveListener(PyramideBtn_OnClick);
-			m_octahedronBtn.onClick.RemoveListener(OctahedronBtn_OnClick);
+			Hide();
 
 			_temp(inp);
 		}

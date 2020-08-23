@@ -18,22 +18,51 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		[Serializable]
 		public class Layer
 		{
-			public GameObject screen;
-			
-			
-			public ActionOnClose actionOnClose;
-
-			public Layer(GameObject screen, ActionOnClose actionOnClose)
+			private UIContainer _container;
+			private GameObject _screen;
+			public GameObject Screen
 			{
-				this.actionOnClose = actionOnClose;
-				this.screen = screen;
+				get => _screen; 
+				set
+				{
+					if (_screen && _screen != value) CloseScreen();
+
+					value.transform.SetParent(_container.transform, false);
+					value.SetActive(false);//This is a patch for unity UI masks
+					value.SetActive(true); //This is a patch for unity UI masks
+
+					_screen = value;
+				}
 			}
 
-			public bool IsDestroy		=> (actionOnClose & ActionOnClose.destroy) == ActionOnClose.destroy;
-			public bool IsUnparent		=> (actionOnClose & ActionOnClose.unparent) == ActionOnClose.unparent;
-			public bool IsUnactivate	=> (actionOnClose & ActionOnClose.unactivate) == ActionOnClose.unactivate;
+
+			public ActionOnClose actionOnClose;
+
+			public Layer(UIContainer container, GameObject screen, ActionOnClose actionOnClose)
+			{
+				this._container = container;
+				this.actionOnClose = actionOnClose;
+				this.Screen = screen;
+			}
+
+			public bool IsDestroy => (actionOnClose & ActionOnClose.destroy) == ActionOnClose.destroy;
+			public bool IsUnparent => (actionOnClose & ActionOnClose.unparent) == ActionOnClose.unparent;
+			public bool IsUnactivate => (actionOnClose & ActionOnClose.unactivate) == ActionOnClose.unactivate;
 
 			public static implicit operator bool(Layer l) => l != null;
+
+			public void CloseScreen()
+			{
+				GameObject currentScreen = Screen;
+				if (IsDestroy) Destroy(currentScreen);
+				else
+				{
+					if (IsUnactivate)
+						currentScreen.SetActive(false);
+					if (IsUnparent)
+						currentScreen.transform.SetParent(null);
+				}
+			}
 		}
 
 		private const string LOG_PREFIX = "["+nameof(UIContainer)+"]";
@@ -54,37 +83,28 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		/// <param name="screen">The screen to add</param>
 		/// <param name="overlay">If it's an overlay or not (if not, Close the old screen)</param>
 		/// <param name="actionOnClose">Destroy this screen when closed</param>
-		public void Add(GameObject screen, bool overlay = false, ActionOnClose actionOnClose = ActionOnClose.unparent)
+		public Layer Add(GameObject screen, bool overlay = false, ActionOnClose actionOnClose = ActionOnClose.unparent)
 		{
-			screen.transform.SetParent(transform, false);
-			screen.SetActive(false);//This is a patch for unity UI masks
-			screen.SetActive(true); //This is a patch for unity UI masks
-
-			if (_layers.Count == 0)
+			Layer layerToReturn;
+			if (_layers.Count == 0 || overlay)
 			{
-				_layers.Add(new Layer(screen, actionOnClose));
-				return;
+				layerToReturn = new Layer(this, screen, actionOnClose);
+				_layers.Add(layerToReturn);
+				return layerToReturn;
 			}
 
-			if (overlay)
-			{
-				_layers.Add(new Layer(screen, actionOnClose));
-				return;
-			}
+			layerToReturn = _layers[_layers.Count];
+			layerToReturn.Screen = screen;
+			layerToReturn.actionOnClose = actionOnClose;
 
-			Layer currentLayer = _layers[_layers.Count];
-			CloseScreen(currentLayer);
-
-			currentLayer.screen = screen;
-			currentLayer.actionOnClose = actionOnClose;
-
+			return layerToReturn;
 		}
 
 		public GameObject Close(GameObject gm)
 		{
 			for (int i = _layers.Count - 1; i >= 0; i--)
 			{
-				if (_layers[i].screen == gm)
+				if (_layers[i].Screen == gm)
 					return Close(_layers[i]);
 			}
 
@@ -99,9 +119,9 @@ namespace Com.Github.Knose1.MiniJam61.UI
 			}
 
 			_layers.Remove(layerToClose);
-			CloseScreen(layerToClose);
+			layerToClose.CloseScreen();
 
-			return layerToClose.screen;
+			return layerToClose.Screen;
 		}
 
 		public GameObject Close()
@@ -115,27 +135,14 @@ namespace Com.Github.Knose1.MiniJam61.UI
 			return Close(_layers[_layers.Count]);
 		}
 
-		private void CloseScreen(Layer currentLayer)
-		{
-			GameObject currentScreen = currentLayer.screen;
-			if (currentLayer.IsDestroy) Destroy(currentScreen);
-			else
-			{
-				if (currentLayer.IsUnactivate)
-					currentScreen.SetActive(false);
-				if (currentLayer.IsUnparent)
-					currentScreen.transform.SetParent(null);
-			}
-		}
-
 		private void CheckLayers()
 		{
 			for (int i = _layers.Count - 1; i >= 0; i--)
 			{
 				Layer layer = _layers[i];
-				if (layer.screen && !layer.screen) _layers.RemoveAt(i);
-				else if (layer.screen && layer.screen.transform.parent != this) _layers.RemoveAt(i);
-				else if (layer.screen && !layer.screen.activeSelf) _layers.RemoveAt(i);
+				if (layer.Screen && !layer.Screen) _layers.RemoveAt(i);
+				else if (layer.Screen && layer.Screen.transform.parent != this) _layers.RemoveAt(i);
+				else if (layer.Screen && !layer.Screen.activeSelf) _layers.RemoveAt(i);
 			}
 		}
 

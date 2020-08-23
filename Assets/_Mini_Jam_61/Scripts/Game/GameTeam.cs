@@ -6,10 +6,11 @@
 		Player
 	}
 
-	public struct TeamData
+	[System.Serializable]
+	public class TeamData
 	{
-		float lifePoint;
+		public float lifePoint;
 
-		public TeamData(float lifePoint):this() => this.lifePoint = lifePoint;
+		public TeamData(float lifePoint) => this.lifePoint = lifePoint;
 	}
 }

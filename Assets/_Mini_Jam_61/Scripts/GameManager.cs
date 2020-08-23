@@ -32,15 +32,15 @@ namespace Com.Github.Knose1.MiniJam61
 		[SerializeField] private Piece m_octahedronPrefab;
 
 		[SerializeField] private PiecePlacingUI m_piecePlacingUi = default;
+		[SerializeField] private PieceSettings m_pieceSetting = default;
 
 		[SerializeField] private ParticleSystem m_particleAvailableMovePrefab = default;
 		[SerializeField] private ParticleSystem m_particleCurrentTile = default;
 
 		List<ParticleSystem> particleAvailableMoveList = new List<ParticleSystem>();
 
-		Action<RaycastHit> doActionOnRay;
 		Action doAction;
-		GameTeam _currentTurn;
+		GameTeam _currentTurn = GameTeam.Player;
 		GameTeam CurrentTurn
 		{
 			get => _currentTurn; 
@@ -54,13 +54,14 @@ namespace Com.Github.Knose1.MiniJam61
 		TeamData playerTeam;
 		TeamData oponentTeam;
 
+		public TeamData CurrentTeam => _currentTurn == GameTeam.Player ? playerTeam : oponentTeam;
+
 		List<Vector2Int> moves;
 		Piece currentSelectedPiece;
 
 		private void Awake()
 		{
 			doAction = DoTurn;
-			doActionOnRay = DoMoveOrPlace;
 			m_playerCamera.OnRay += PlayerCamera_OnRay;
 			m_particleCurrentTile.gameObject.SetActive(false);
 		}
@@ -80,88 +81,79 @@ namespace Com.Github.Knose1.MiniJam61
 
 		private void PlayerCamera_OnRay(RaycastHit obj)
 		{
-			doActionOnRay?.Invoke(obj);
-		}
-
-		private void DoCheckForMove(RaycastHit obj)
-		{
-			Piece raycastPiece = obj.transform.parent.GetComponent<Piece>();
-
-			if (!raycastPiece) raycastPiece = m_grid.GetPieceAt(m_grid.WorldToGrid(obj.point));
-
-			Vector2Int pos = m_grid.WorldToGrid(obj.point);
-
-			if (raycastPiece && raycastPiece.Team == CurrentTurn)
-			{
-				pos = m_grid.WorldToGrid(raycastPiece.transform.position);
-
-				//When select another piece
-				SelectPiece(raycastPiece);
-				SetSelectedTile(m_grid.GridToWorld(pos));
-				return;
-			}
-
-			if (!moves.Contains(pos)) return;
-
-			Piece pieceAtPose = m_grid.GetPieceAt(pos);
-			if (pieceAtPose) 
-			{
-				pieceAtPose.Kill(m_grid, ref playerTeam, ref oponentTeam, false);
-			}
-
-			currentSelectedPiece.transform.position = m_grid.GridToWorld(pos);
-			currentSelectedPiece = null;
-			doActionOnRay = DoMoveOrPlace;
-
-			UnSelectPiece();
-			UnsetSelectedTile();
-			SetNextTurn();
-		}
-
-		/// <summary>
-		/// If a square is selected, open piece add UI
-		/// 
-		/// If a piece is selected, select and set mode DoCheckForMove
-		/// </summary>
-		/// <param name="obj"></param>
-		private void DoMoveOrPlace(RaycastHit obj)
-		{
 			Piece piece = obj.transform.parent.GetComponent<Piece>();
 
-			Vector3 pos;
+			Vector3 pos = default;
+			Vector2Int posGrid = m_grid.WorldToGrid(obj.point);
+
 
 			if (!piece) piece = m_grid.GetPieceAt(m_grid.WorldToGrid(obj.point));
 
-			if (piece && piece.Team != CurrentTurn) return;
+			if (piece) posGrid = m_grid.WorldToGrid(piece.transform);
 
-			UnSelectPiece();
+			m_piecePlacingUi.Hide();
 
-			if (piece)
+			if (moves != null && moves.Contains(posGrid))
 			{
+				Piece pieceAtPose = m_grid.GetPieceAt(posGrid);
+				if (pieceAtPose)
+				{
+					pieceAtPose.Kill(m_grid, ref playerTeam, ref oponentTeam, false);
+				}
+
+				currentSelectedPiece.transform.position = m_grid.GridToWorld(posGrid);
+				currentSelectedPiece = null;
+
+				UnSelectPiece();
+				UnsetSelectedTile();
+				SetNextTurn();
+			}
+			else if (piece && piece.Team == CurrentTurn)
+			{
+				UnSelectPiece();
+
 				//Select a piece
 				pos = SelectPiece(piece);
+				SetSelectedTile(pos);
 			}
-			else
+			else if (!piece)
 			{
+				UnSelectPiece();
+
 				//Place a piece
-				pos = m_grid.GridToWorld(m_grid.WorldToGrid(obj.point));
-
-				doAction = null;
-
-				PiecePlacingUI.PlacingInput allowedInputs =
-					PiecePlacingUI.PlacingInput.Cube |
-					PiecePlacingUI.PlacingInput.Octahedron |
-					PiecePlacingUI.PlacingInput.Pyramide
-				;
-				m_piecePlacingUi.Show(PiecePlacingUi_ResolveInput, allowedInputs, CurrentTurn);
+				pos = ModeAddAPiece(obj);
+				SetSelectedTile(pos);
 			}
-
-			SetSelectedTile(pos);
 		}
 
-		private void PiecePlacingUi_ResolveInput(PiecePlacingUI.PlacingInput obj)
+		
+		private void PiecePlacingUi_ResolveInput(PiecePlacingUI.PlacingInput inp, Vector2Int grid)
 		{
-			if (obj != PiecePlacingUI.PlacingInput.Nothing) SetNextTurn();
+			Piece piece = null;
+			switch (inp)
+			{
+				case PiecePlacingUI.PlacingInput.Cube:
+					piece = Instantiate(m_cubePrefab);
+					CurrentTeam.lifePoint -= m_pieceSetting.CubeCost;
+					break;
+				case PiecePlacingUI.PlacingInput.Pyramide:
+					piece = Instantiate(m_pyramidePrefab);
+					CurrentTeam.lifePoint -= m_pieceSetting.TriangleCost;
+					break;
+				case PiecePlacingUI.PlacingInput.Octahedron:
+					piece = Instantiate(m_octahedronPrefab);
+					CurrentTeam.lifePoint -= m_pieceSetting.OctahedronCost;
+					break;
+			}
+
+			if (piece) 
+			{
+				m_grid.PlacePiece(piece, grid);
+				piece.Team = CurrentTurn;
+			}
+
+			if (inp != PiecePlacingUI.PlacingInput.Nothing) SetNextTurn();
+
 			doAction = DoTurn;
 			UnsetSelectedTile();
 		}
@@ -191,7 +183,6 @@ namespace Com.Github.Knose1.MiniJam61
 				UnsetSelectedTile();
 
 				doAction = DoTurn;
-				doActionOnRay = DoMoveOrPlace;
 			}
 		}
 
@@ -203,6 +194,47 @@ namespace Com.Github.Knose1.MiniJam61
 
 		private void SetNextTurn() => CurrentTurn = (GameTeam)(((int)CurrentTurn + 1) % 2);
 
+
+		/*///////////////////////////////*/
+		/*                               */
+		/*             Modes             */
+		/*                               */
+		/*///////////////////////////////*/
+
+		private Vector3 ModeAddAPiece(RaycastHit obj)
+		{
+			Vector3 pos = m_grid.GridToWorld(m_grid.WorldToGrid(obj.point));
+			//doAction = null;
+
+			PiecePlacingUI.PlacingInput allowedInputs = PiecePlacingUI.PlacingInput.Nothing;
+
+			if (CurrentTeam.lifePoint - m_pieceSetting.CubeCost > 0)
+			{
+				allowedInputs = (allowedInputs == PiecePlacingUI.PlacingInput.Nothing) ? 
+					PiecePlacingUI.PlacingInput.Cube : 
+					allowedInputs | PiecePlacingUI.PlacingInput.Cube;
+			}
+
+			if (CurrentTeam.lifePoint - m_pieceSetting.OctahedronCost > 0)
+			{
+				allowedInputs = (allowedInputs == PiecePlacingUI.PlacingInput.Nothing) ?
+					PiecePlacingUI.PlacingInput.Octahedron :
+					allowedInputs | PiecePlacingUI.PlacingInput.Octahedron;
+			}
+
+			if (CurrentTeam.lifePoint - m_pieceSetting.TriangleCost > 0)
+			{
+				allowedInputs = (allowedInputs == PiecePlacingUI.PlacingInput.Nothing) ?
+					PiecePlacingUI.PlacingInput.Pyramide :
+					allowedInputs | PiecePlacingUI.PlacingInput.Pyramide;
+			}
+
+			m_piecePlacingUi.Show((PiecePlacingUI.PlacingInput inp) =>
+			{
+				PiecePlacingUi_ResolveInput(inp, m_grid.WorldToGrid(obj.point));
+			}, allowedInputs, CurrentTurn);
+			return pos;
+		}
 
 		/*///////////////////////////////*/
 		/*                               */
@@ -226,7 +258,6 @@ namespace Com.Github.Knose1.MiniJam61
 			UnSelectPiece();
 			Vector3 pos = m_grid.GridToWorld(m_grid.WorldToGrid(piece.transform.position));
 			currentSelectedPiece = piece;
-			doActionOnRay = DoCheckForMove;
 
 			doAction = DoTurnWithSelection;
 
