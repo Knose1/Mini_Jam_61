@@ -21,6 +21,8 @@ namespace Com.Github.Knose1.MiniJam61
 		public delegate bool OnEndDelegate(GameTeam winner);
 		public static event OnEndDelegate OnEnd;
 
+		[SerializeField] private float startLifePoint = 10f;
+
 		[SerializeField] private PlayerCamera m_playerCamera = null;
 		[SerializeField] private Grid m_grid = null;
 
@@ -32,6 +34,8 @@ namespace Com.Github.Knose1.MiniJam61
 
 		[SerializeField] private ParticleSystem m_particleAvailableMovePrefab = default;
 		[SerializeField] private ParticleSystem m_particleCurrentTile = default;
+
+		List<ParticleSystem> particleAvailableMoveList = new List<ParticleSystem>();
 
 		Action doAction;
 		GameTeam _currentTurn;
@@ -45,6 +49,9 @@ namespace Com.Github.Knose1.MiniJam61
 			}
 		}
 
+		TeamData playerTeam;
+		TeamData oponentTeam;
+
 		private void Awake()
 		{
 			doAction = DoTurn;
@@ -55,25 +62,36 @@ namespace Com.Github.Knose1.MiniJam61
 		private void Start()
 		{
 			m_playerCamera.SetStateNormal();
+			playerTeam = new TeamData(startLifePoint);
+			oponentTeam = new TeamData(startLifePoint);
 		}
 
 		private void PlayerCamera_OnRay(RaycastHit obj)
 		{
 			Piece piece = obj.transform.GetComponent<Piece>();
 
-			Vector3Int pos;
+			Vector3 pos;
 
 			if (piece)
 			{
 				//Move a piece
-				pos = Vector3Int.RoundToInt(obj.transform.position);
+				pos = m_grid.GridToWord(m_grid.WorldToGrid(obj.transform.position));
 
-				//piece.GetMouvement();
+				List<Vector2Int> moves = piece.GetMouvement(m_grid);
+				m_playerCamera.SetStatePlacePiece();
+
+				for (int i = moves.Count - 1; i >= 0; i--)
+				{
+					ParticleSystem item = Instantiate(m_particleAvailableMovePrefab);
+					item.transform.position = m_grid.GridToWord(moves[i]);
+					item.Play();
+					particleAvailableMoveList.Add(item); ;
+				}
 			}
 			else
 			{
 				//Place a piece
-				pos = Vector3Int.RoundToInt(obj.point);
+				pos = m_grid.GridToWord(m_grid.WorldToGrid(obj.point));
 
 				doAction = null;
 
@@ -84,8 +102,6 @@ namespace Com.Github.Knose1.MiniJam61
 				;
 				m_piecePlacingUi.Show(PiecePlacingUi_ResolveInput, allowedInputs, CurrentTurn);
 			}
-
-			pos.y = 0;
 
 			m_particleCurrentTile.gameObject.SetActive(true);
 			m_particleCurrentTile.Play();

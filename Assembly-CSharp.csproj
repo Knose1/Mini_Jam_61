@@ -72,6 +72,7 @@
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\GameTeam.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Grid.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Cube.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Octaedron.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Pyramide.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\PlayerCamera.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\TileShow.cs" />

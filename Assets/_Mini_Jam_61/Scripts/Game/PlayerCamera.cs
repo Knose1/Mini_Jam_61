@@ -57,6 +57,19 @@ namespace Com.Github.Knose1.MiniJam61.Game
 
 		}
 
+		public void SetStatePlacePiece() => doAction = DoActionPlacePiece;
+		private void DoActionPlacePiece()
+		{
+			if (m_controller.MouseLeftClick)
+			{
+				RaycastHit? hit = Ray();
+				if (hit.HasValue)
+				{
+					OnRay(hit.Value);
+				}
+			}
+		}
+
 		public void SetStateVoid() => doAction = null;
 		
 

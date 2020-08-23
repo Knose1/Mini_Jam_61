@@ -1,4 +1,5 @@
 ﻿using Com.Github.Knose1.MiniJam61.Game.Base;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +9,14 @@ namespace Com.Github.Knose1.MiniJam61
 	public class Grid : MonoBehaviour
 	{
 		[SerializeField] protected Vector2Int m_size;
+		public Vector2Int Size {
+			get => m_size;
+			set => m_size = value;
+		}
+		
 		[SerializeField] protected Transform m_board;
 		[SerializeField] protected Transform m_piece_container;
+
 		[SerializeField] protected List<Piece> m_pieces = new List<Piece>();
 
 		private void OnValidate()
@@ -37,13 +44,36 @@ namespace Com.Github.Knose1.MiniJam61
 			piece.transform.SetParent(null);
 		}
 
+		public bool IsPosInsideGrid(Vector2Int pos)
+		{
+			return
+				pos.x >= 0 && pos.x <= m_size.x
+				&&
+				pos.y >= 0 && pos.y <= m_size.y
+			;
+		}
+
+		public Vector2Int WorldToGrid(Transform transform)
+		{
+			return WorldToGrid(transform.position);
+		}
+
+		public Vector2Int WorldToGrid(Vector3 pos)
+		{
+			return Vector2Int.RoundToInt(new Vector2(pos.x, pos.z));
+		}
+
+		public Vector3 GridToWord(Vector2Int pos)
+		{
+			return new Vector3(pos.x, 0, pos.y);
+		}
+
 		public Piece GetPieceAt(Vector2Int pos)
 		{
 			for (int i = m_pieces.Count - 1; i >= 0; i--)
 			{
 				Piece p = m_pieces[i];
-				Vector3 localPosition = p.transform.localPosition;
-				Vector2Int vector2Int = Vector2Int.FloorToInt(new Vector2(-localPosition.x, -localPosition.z));
+				Vector2Int vector2Int = WorldToGrid(p.transform);
 				if (vector2Int == pos) return p;
 			}
 

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Com.Github.Knose1.MiniJam61.Settings;
+using System;
 
 namespace Com.Github.Knose1.MiniJam61.Game.Base
 {
 
 	[ExecuteInEditMode]
-	[RequireComponent(typeof(MeshRenderer))]
-	public class Piece : MonoBehaviour
+	public abstract class Piece : MonoBehaviour
 	{
 		
 		[SerializeField] protected List<string> m_colors = new List<string>();
@@ -21,10 +21,9 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 		}
 
 		[SerializeField] protected ColorSettings m_settings = default;
+		[SerializeField] protected MeshRenderer m_renderer = null;
 		
-
 		protected Material materialClone = null;
-		new protected MeshRenderer renderer = null;
 
 		private void OnValidate()
 		{
@@ -35,8 +34,6 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 		{
 			if (m_material != null)
 				materialClone = new Material(m_material);
-
-			renderer = GetComponent<MeshRenderer>();
 
 			if (m_team == GameTeam.Player)		transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
 			if (m_team == GameTeam.Opponent)	transform.rotation = Quaternion.AngleAxis(0, Vector3.up);
@@ -64,7 +61,9 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 				materialClone.SetColor(m_colors[i], c);
 			}
 
-			renderer.material = materialClone;
+			m_renderer.material = materialClone;
 		}
+
+		public abstract List<Vector2Int> GetMouvement(Grid grid);
 	}
 }

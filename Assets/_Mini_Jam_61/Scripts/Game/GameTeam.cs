@@ -5,4 +5,11 @@
 		Opponent,
 		Player
 	}
+
+	public struct TeamData
+	{
+		float lifePoint;
+
+		public TeamData(float lifePoint):this() => this.lifePoint = lifePoint;
+	}
 }
