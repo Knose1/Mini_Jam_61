@@ -28,7 +28,7 @@ namespace Com.Github.Knose1.MiniJam61
 		[SerializeField] private Piece m_pyramidePrefab;
 		[SerializeField] private Piece m_octahedronPrefab;
 
-		[SerializeField] private PiecePlacingUI m_piecePlacingUi;
+		[SerializeField] private PiecePlacingUI m_piecePlacingUi = default;
 
 		Action doAction;
 		PieceTeam currentTurn;

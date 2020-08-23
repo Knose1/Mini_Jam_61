@@ -16,6 +16,8 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		[SerializeField] private Button m_octahedronBtn = null;
 
 		[SerializeField] private Controller m_controller = null;
+		[SerializeField] private ColorSettings m_colorSettings;
+		[SerializeField] private Image m_background = null;
 
 		private Action<PlacingInput> onInput;
 
@@ -34,8 +36,16 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		{
 			this.onInput = onInput;
 			doAction = DoActionCheckForInput;
+
+			m_cubeBtn.onClick.AddListener(CubeBtn_OnClick);
+			m_pyramideBtn.onClick.AddListener(PyramideBtn_OnClick);
+			m_octahedronBtn.onClick.AddListener(OctahedronBtn_OnClick);
 		}
 
+
+		private void CubeBtn_OnClick() => SendOnInputAndSleep(PlacingInput.Cube);
+		private void PyramideBtn_OnClick() => SendOnInputAndSleep(PlacingInput.Pyramide);
+		private void OctahedronBtn_OnClick() => SendOnInputAndSleep(PlacingInput.Octahedron);
 		private void DoActionCheckForInput()
 		{
 			if (m_controller.EscapeDown)
@@ -47,6 +57,11 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		private void SendOnInputAndSleep(PlacingInput inp)
 		{
 			doAction = null;
+
+			m_cubeBtn.onClick.RemoveListener(CubeBtn_OnClick);
+			m_pyramideBtn.onClick.RemoveListener(PyramideBtn_OnClick);
+			m_octahedronBtn.onClick.RemoveListener(OctahedronBtn_OnClick);
+
 			onInput(inp);
 		}
 
