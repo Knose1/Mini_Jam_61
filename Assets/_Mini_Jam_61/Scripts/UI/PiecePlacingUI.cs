@@ -35,12 +35,27 @@ namespace Com.Github.Knose1.MiniJam61.UI
 
 		public void Show(Action<PlacingInput> onInput, PlacingInput allowedInputs, GameTeam currentPlayer)
 		{
+			UIContainer.Instance.Add(gameObject, true, UIContainer.ActionOnClose.unactivate);
+
 			this.onInput = onInput;
 			doAction = DoActionCheckForInput;
 
 			m_cubeBtn.onClick.AddListener(CubeBtn_OnClick);
 			m_pyramideBtn.onClick.AddListener(PyramideBtn_OnClick);
 			m_octahedronBtn.onClick.AddListener(OctahedronBtn_OnClick);
+
+			Color c = default;
+			switch (currentPlayer)
+			{
+				case GameTeam.Opponent:
+					c = m_colorSettings.OpponentColor;
+					break;
+				case GameTeam.Player:
+					c = m_colorSettings.PlayerColor;
+					break;
+			}
+			
+			m_background.color = c;
 		}
 
 
@@ -49,7 +64,7 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		private void OctahedronBtn_OnClick() => SendOnInputAndSleep(PlacingInput.Octahedron);
 		private void DoActionCheckForInput()
 		{
-			if (m_controller.EscapeDown)
+			if (m_controller.EscapeDown || m_controller.MouseRightDown)
 			{
 				SendOnInputAndSleep(PlacingInput.Nothing);
 			}
@@ -57,6 +72,8 @@ namespace Com.Github.Knose1.MiniJam61.UI
 
 		private void SendOnInputAndSleep(PlacingInput inp)
 		{
+			UIContainer.Instance.Close(gameObject);
+
 			doAction = null;
 
 			m_cubeBtn.onClick.RemoveListener(CubeBtn_OnClick);

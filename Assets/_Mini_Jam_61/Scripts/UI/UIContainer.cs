@@ -80,11 +80,22 @@ namespace Com.Github.Knose1.MiniJam61.UI
 
 		}
 
+		public GameObject Close(GameObject gm)
+		{
+			for (int i = _layers.Count - 1; i >= 0; i--)
+			{
+				if (_layers[i].screen == gm)
+					return Close(_layers[i]);
+			}
+
+			return null;
+		}
 		public GameObject Close(Layer layerToClose)
 		{
 			if (!_layers.Contains(layerToClose))
 			{
 				Debug.LogWarning(LOG_PREFIX + " The UI layer provided is not on the UIContainer " + gameObject.name);
+				return null;
 			}
 
 			_layers.Remove(layerToClose);
@@ -98,6 +109,7 @@ namespace Com.Github.Knose1.MiniJam61.UI
 			if (_layers.Count == 0)
 			{
 				Debug.LogWarning(LOG_PREFIX + " There is no UI layer on " + gameObject.name);
+				return null;
 			}
 
 			return Close(_layers[_layers.Count]);
@@ -121,7 +133,9 @@ namespace Com.Github.Knose1.MiniJam61.UI
 			for (int i = _layers.Count - 1; i >= 0; i--)
 			{
 				Layer layer = _layers[i];
-				if (layer.screen && layer.screen.transform.parent != this) _layers.RemoveAt(i);
+				if (layer.screen && !layer.screen) _layers.RemoveAt(i);
+				else if (layer.screen && layer.screen.transform.parent != this) _layers.RemoveAt(i);
+				else if (layer.screen && !layer.screen.activeSelf) _layers.RemoveAt(i);
 			}
 		}
 

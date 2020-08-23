@@ -58,7 +58,7 @@ namespace Com.Github.Knose1.MiniJam61
 					PiecePlacingUI.PlacingInput.Octahedron |
 					PiecePlacingUI.PlacingInput.Pyramide
 				;
-				m_piecePlacingUi.Show(PiecePlacingUi_ResolveInput, allowedInputs);
+				m_piecePlacingUi.Show(PiecePlacingUi_ResolveInput, allowedInputs, currentTurn);
 			}
 		}
 

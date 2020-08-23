@@ -12,7 +12,7 @@ namespace Com.Github.Knose1.MiniJam61.Game
 	{
 		public event Action<RaycastHit> OnRay;
 
-		private const int ADD_RAY_DISTANCE = 10;
+		private const int ADD_RAY_DISTANCE = 100;
 		[SerializeField] private Controller m_controller = null;
 		[SerializeField] protected Camera m_camera;
 		[SerializeField] protected Transform m_cameraRotationUp;
