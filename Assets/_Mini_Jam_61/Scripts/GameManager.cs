@@ -1,6 +1,7 @@
 ﻿using Com.Github.Knose1.MiniJam61.Game;
 using Com.Github.Knose1.MiniJam61.Game.Base;
 using Com.Github.Knose1.MiniJam61.Settings;
+using Com.Github.Knose1.MiniJam61.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,8 +25,10 @@ namespace Com.Github.Knose1.MiniJam61
 		[SerializeField] private Grid m_grid = null;
 
 		[SerializeField] private Piece m_cubePrefab;
-		[SerializeField] private Piece m_trianglePrefab;
+		[SerializeField] private Piece m_pyramidePrefab;
 		[SerializeField] private Piece m_octahedronPrefab;
+
+		[SerializeField] private PiecePlacingUI m_piecePlacingUi;
 
 		Action doAction;
 		PieceTeam currentTurn;
@@ -50,7 +53,18 @@ namespace Com.Github.Knose1.MiniJam61
 				//Place a piece
 				doAction = null;
 
+				PiecePlacingUI.PlacingInput allowedInputs =
+					PiecePlacingUI.PlacingInput.Cube |
+					PiecePlacingUI.PlacingInput.Octahedron |
+					PiecePlacingUI.PlacingInput.Pyramide
+				;
+				m_piecePlacingUi.Show(PiecePlacingUi_ResolveInput, allowedInputs);
 			}
+		}
+
+		private void PiecePlacingUi_ResolveInput(PiecePlacingUI.PlacingInput obj)
+		{
+
 		}
 
 		private void Start()
