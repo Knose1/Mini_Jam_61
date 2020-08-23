@@ -27,9 +27,9 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 			if (Application.isPlaying) SetColor();
 		}
 
-		private void Start()
+		private void OnEnable()
 		{
-			
+			SetColor();
 		}
 
 		private void SetColor()

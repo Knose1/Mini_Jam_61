@@ -87,10 +87,14 @@ namespace Com.Github.Knose1.MiniJam61
 		{
 			Piece raycastPiece = obj.transform.parent.GetComponent<Piece>();
 
-			Vector2Int pos = m_grid.WorldToGrid(obj.transform.position); ;
+			if (!raycastPiece) raycastPiece = m_grid.GetPieceAt(m_grid.WorldToGrid(obj.point));
+
+			Vector2Int pos = m_grid.WorldToGrid(obj.point);
 
 			if (raycastPiece && raycastPiece.Team == CurrentTurn)
 			{
+				pos = m_grid.WorldToGrid(raycastPiece.transform.position);
+
 				//When select another piece
 				SelectPiece(raycastPiece);
 				SetSelectedTile(m_grid.GridToWorld(pos));
@@ -99,9 +103,19 @@ namespace Com.Github.Knose1.MiniJam61
 
 			if (!moves.Contains(pos)) return;
 
+			Piece pieceAtPose = m_grid.GetPieceAt(pos);
+			if (pieceAtPose) 
+			{
+				pieceAtPose.Kill(m_grid, ref playerTeam, ref oponentTeam, false);
+			}
+
 			currentSelectedPiece.transform.position = m_grid.GridToWorld(pos);
 			currentSelectedPiece = null;
 			doActionOnRay = DoMoveOrPlace;
+
+			UnSelectPiece();
+			UnsetSelectedTile();
+			SetNextTurn();
 		}
 
 		/// <summary>
@@ -115,6 +129,8 @@ namespace Com.Github.Knose1.MiniJam61
 			Piece piece = obj.transform.parent.GetComponent<Piece>();
 
 			Vector3 pos;
+
+			if (!piece) piece = m_grid.GetPieceAt(m_grid.WorldToGrid(obj.point));
 
 			if (piece && piece.Team != CurrentTurn) return;
 
@@ -198,7 +214,7 @@ namespace Com.Github.Knose1.MiniJam61
 		{
 			for (int i = particleAvailableMoveList.Count - 1; i >= 0; i--)
 			{
-				Destroy(particleAvailableMoveList[i]);
+				Destroy(particleAvailableMoveList[i].gameObject);
 				particleAvailableMoveList.RemoveAt(i);
 			}
 			currentSelectedPiece = null;
@@ -217,9 +233,12 @@ namespace Com.Github.Knose1.MiniJam61
 			moves = piece.GetMouvement(m_grid);
 			for (int i = moves.Count - 1; i >= 0; i--)
 			{
+				m_particleAvailableMovePrefab.GetComponent<TileShow>().Team = CurrentTurn;
+
 				ParticleSystem item = Instantiate(m_particleAvailableMovePrefab);
 				item.transform.position = m_grid.GridToWorld(moves[i]);
 				item.Play();
+				
 				particleAvailableMoveList.Add(item);
 			}
 
@@ -234,6 +253,7 @@ namespace Com.Github.Knose1.MiniJam61
 
 		private void SetSelectedTile(Vector3 pos)
 		{
+			m_particleCurrentTile.GetComponent<TileShow>().Team = CurrentTurn;
 			m_particleCurrentTile.gameObject.SetActive(true);
 			m_particleCurrentTile.Play();
 

@@ -65,5 +65,18 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 		}
 
 		public abstract List<Vector2Int> GetMouvement(Grid grid);
+
+		protected virtual void KillEffect(Grid grid, ref TeamData playerTeam, ref TeamData oponentTeam)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Kill(Grid grid, ref TeamData playerTeam, ref TeamData oponentTeam, bool doEffect = false)
+		{
+			grid.RemovePiece(this);
+
+			if (doEffect) KillEffect(grid, ref playerTeam, ref oponentTeam);
+			Destroy(gameObject);
+		}
 	}
 }
