@@ -17,7 +17,7 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		[SerializeField] private Button m_octahedronBtn = null;
 
 		[SerializeField] private Controller m_controller = null;
-		[SerializeField] private ColorSettings m_colorSettings;
+		[SerializeField] private ColorSettings m_colorSettings = null;
 		[SerializeField] private Image m_background = null;
 
 		private Action<PlacingInput> onInput;
@@ -25,16 +25,19 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		[Flags]
 		public enum PlacingInput
 		{
-			Nothing		= 0 >> 0,
-			Cube		= 0 >> 1,
-			Pyramide    = 0 >> 2,
-			Octahedron  = 0 >> 3
+			Nothing		= 1 << 0,
+			Cube		= 1 << 1,
+			Pyramide    = 1 << 2,
+			Octahedron  = 1 << 3
 		}
 
 		private Action doAction;
 
+
 		public void Show(Action<PlacingInput> onInput, PlacingInput allowedInputs, GameTeam currentPlayer)
 		{
+			//TODO: disable buttons depending on allowedInputs
+
 			UIContainer.Instance.Add(gameObject, true, UIContainer.ActionOnClose.unactivate);
 
 			this.onInput = onInput;
@@ -72,15 +75,18 @@ namespace Com.Github.Knose1.MiniJam61.UI
 
 		private void SendOnInputAndSleep(PlacingInput inp)
 		{
+			var _temp = onInput;
+
 			UIContainer.Instance.Close(gameObject);
 
 			doAction = null;
+			onInput = null;
 
 			m_cubeBtn.onClick.RemoveListener(CubeBtn_OnClick);
 			m_pyramideBtn.onClick.RemoveListener(PyramideBtn_OnClick);
 			m_octahedronBtn.onClick.RemoveListener(OctahedronBtn_OnClick);
 
-			onInput(inp);
+			_temp(inp);
 		}
 
 

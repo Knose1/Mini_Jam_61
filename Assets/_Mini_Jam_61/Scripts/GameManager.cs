@@ -30,27 +30,51 @@ namespace Com.Github.Knose1.MiniJam61
 
 		[SerializeField] private PiecePlacingUI m_piecePlacingUi = default;
 
+		[SerializeField] private ParticleSystem m_particleAvailableMovePrefab = default;
+		[SerializeField] private ParticleSystem m_particleCurrentTile = default;
+
 		Action doAction;
-		GameTeam currentTurn;
+		GameTeam _currentTurn;
+		GameTeam CurrentTurn
+		{
+			get => _currentTurn; 
+			set
+			{
+				_currentTurn = value;
+				OnPlayerChange?.Invoke(_currentTurn);
+			}
+		}
 
 		private void Awake()
 		{
 			doAction = DoTurn;
 			m_playerCamera.OnRay += PlayerCamera_OnRay;
+			m_particleCurrentTile.gameObject.SetActive(false);
+		}
+
+		private void Start()
+		{
+			m_playerCamera.SetStateNormal();
 		}
 
 		private void PlayerCamera_OnRay(RaycastHit obj)
 		{
 			Piece piece = obj.transform.GetComponent<Piece>();
+
+			Vector3Int pos;
+
 			if (piece)
 			{
 				//Move a piece
+				pos = Vector3Int.RoundToInt(obj.transform.position);
 
 				//piece.GetMouvement();
 			}
 			else
 			{
 				//Place a piece
+				pos = Vector3Int.RoundToInt(obj.point);
+
 				doAction = null;
 
 				PiecePlacingUI.PlacingInput allowedInputs =
@@ -58,18 +82,23 @@ namespace Com.Github.Knose1.MiniJam61
 					PiecePlacingUI.PlacingInput.Octahedron |
 					PiecePlacingUI.PlacingInput.Pyramide
 				;
-				m_piecePlacingUi.Show(PiecePlacingUi_ResolveInput, allowedInputs, currentTurn);
+				m_piecePlacingUi.Show(PiecePlacingUi_ResolveInput, allowedInputs, CurrentTurn);
 			}
+
+			pos.y = 0;
+
+			m_particleCurrentTile.gameObject.SetActive(true);
+			m_particleCurrentTile.Play();
+
+			m_particleCurrentTile.transform.position = pos;
 		}
 
 		private void PiecePlacingUi_ResolveInput(PiecePlacingUI.PlacingInput obj)
 		{
-
-		}
-
-		private void Start()
-		{
-			m_playerCamera.SetStateNormal();
+			if (obj != PiecePlacingUI.PlacingInput.Nothing) SetNextTurn();
+			doAction = DoTurn;
+			m_particleCurrentTile.Stop();
+			m_particleCurrentTile.gameObject.SetActive(false);
 		}
 
 		private void Update()
@@ -82,5 +111,7 @@ namespace Com.Github.Knose1.MiniJam61
 		{
 			m_playerCamera.ManualUpdate();
 		}
+
+		private void SetNextTurn() => CurrentTurn = (GameTeam)(((int)CurrentTurn + 1) % 2);
 	}
 }

@@ -17,7 +17,7 @@ namespace Com.Github.Knose1.MiniJam61
 			if (!m_board) return;
 
 			m_board.localScale = new Vector3(m_size.x, (m_size.x + m_size.y) / 2f, m_size.y);
-			m_board.position = new Vector3(m_size.x - 1f, 1f, m_size.y - 1f) / -2;
+			m_board.position = new Vector3(m_size.x - 1f, -1f, m_size.y - 1f) / 2;
 		}
 
 		public void PlaceObj(Transform piece, Vector2Int pos)

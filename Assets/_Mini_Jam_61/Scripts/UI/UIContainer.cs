@@ -10,9 +10,9 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		[Flags]
 		public enum ActionOnClose
 		{
-			unactivate  = 0 >> 0,
-			unparent    = 0 >> 1,
-			destroy     = 0 >> 2,
+			unactivate  = 1 << 0,
+			unparent    = 1 << 1,
+			destroy     = 1 << 2,
 		}
 
 		[Serializable]
