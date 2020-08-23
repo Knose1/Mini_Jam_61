@@ -13,8 +13,8 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 		
 		[SerializeField] protected List<string> m_colors = new List<string>();
 		[SerializeField] protected Material m_material = default;
-		[SerializeField] protected PieceTeam m_team = default;
-		public PieceTeam Team 
+		[SerializeField] protected GameTeam m_team = default;
+		public GameTeam Team 
 		{
 			get => m_team;
 			set => m_team = value;
@@ -38,8 +38,8 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 
 			renderer = GetComponent<MeshRenderer>();
 
-			if (m_team == PieceTeam.Player)		transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
-			if (m_team == PieceTeam.Opponent)	transform.rotation = Quaternion.AngleAxis(0, Vector3.up);
+			if (m_team == GameTeam.Player)		transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
+			if (m_team == GameTeam.Opponent)	transform.rotation = Quaternion.AngleAxis(0, Vector3.up);
 		}
 
 		private void Update()
@@ -51,10 +51,10 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 			Color c = default;
 			switch (m_team)
 			{
-				case PieceTeam.Opponent:
+				case GameTeam.Opponent:
 					c = m_settings.OpponentColor;
 					break;
-				case PieceTeam.Player:
+				case GameTeam.Player:
 					c = m_settings.PlayerColor;
 					break;
 			}

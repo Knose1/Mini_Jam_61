@@ -9,8 +9,8 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 	{
 		
 		[SerializeField] protected List<ParticleSystem> m_particleSystems = new List<ParticleSystem>();
-		[SerializeField] protected PieceTeam m_team = default;
-		public PieceTeam Team 
+		[SerializeField] protected GameTeam m_team = default;
+		public GameTeam Team 
 		{
 			get => m_team;
 			set => m_team = value;
@@ -37,10 +37,10 @@ namespace Com.Github.Knose1.MiniJam61.Game.Base
 			Color c = default;
 			switch (m_team)
 			{
-				case PieceTeam.Opponent:
+				case GameTeam.Opponent:
 					c = m_settings.OpponentColor;
 					break;
-				case PieceTeam.Player:
+				case GameTeam.Player:
 					c = m_settings.PlayerColor;
 					break;
 			}

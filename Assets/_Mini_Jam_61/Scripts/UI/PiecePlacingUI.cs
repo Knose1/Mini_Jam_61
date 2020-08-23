@@ -1,4 +1,5 @@
-﻿using Com.Github.Knose1.MiniJam61.Settings;
+﻿using Com.Github.Knose1.MiniJam61.Game;
+using Com.Github.Knose1.MiniJam61.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace Com.Github.Knose1.MiniJam61.UI
 
 		private Action doAction;
 
-		public void Show(Action<PlacingInput> onInput, PlacingInput allowedInputs)
+		public void Show(Action<PlacingInput> onInput, PlacingInput allowedInputs, GameTeam currentPlayer)
 		{
 			this.onInput = onInput;
 			doAction = DoActionCheckForInput;

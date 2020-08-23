@@ -11,14 +11,14 @@ namespace Com.Github.Knose1.MiniJam61
 {
 	public class GameManager : MonoBehaviour
 	{
-		public delegate bool OnPlayerChangeDelegate(PieceTeam currentPlayerTurn);
+		public delegate bool OnPlayerChangeDelegate(GameTeam currentPlayerTurn);
 		public static event OnPlayerChangeDelegate OnPlayerChange;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns>If true, rematch</returns>
-		public delegate bool OnEndDelegate(PieceTeam winner);
+		public delegate bool OnEndDelegate(GameTeam winner);
 		public static event OnEndDelegate OnEnd;
 
 		[SerializeField] private PlayerCamera m_playerCamera = null;
@@ -31,7 +31,7 @@ namespace Com.Github.Knose1.MiniJam61
 		[SerializeField] private PiecePlacingUI m_piecePlacingUi = default;
 
 		Action doAction;
-		PieceTeam currentTurn;
+		GameTeam currentTurn;
 
 		private void Awake()
 		{
