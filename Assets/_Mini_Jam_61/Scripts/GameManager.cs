@@ -23,6 +23,7 @@ namespace Com.Github.Knose1.MiniJam61
 
 		[SerializeField] private float startLifePoint = 10f;
 
+		[SerializeField] private Controller m_controller = null;
 		[SerializeField] private PlayerCamera m_playerCamera = null;
 		[SerializeField] private Grid m_grid = null;
 
@@ -37,6 +38,7 @@ namespace Com.Github.Knose1.MiniJam61
 
 		List<ParticleSystem> particleAvailableMoveList = new List<ParticleSystem>();
 
+		Action<RaycastHit> doActionOnRay;
 		Action doAction;
 		GameTeam _currentTurn;
 		GameTeam CurrentTurn
@@ -52,9 +54,13 @@ namespace Com.Github.Knose1.MiniJam61
 		TeamData playerTeam;
 		TeamData oponentTeam;
 
+		List<Vector2Int> moves;
+		Piece currentSelectedPiece;
+
 		private void Awake()
 		{
 			doAction = DoTurn;
+			doActionOnRay = DoMoveOrPlace;
 			m_playerCamera.OnRay += PlayerCamera_OnRay;
 			m_particleCurrentTile.gameObject.SetActive(false);
 		}
@@ -66,32 +72,63 @@ namespace Com.Github.Knose1.MiniJam61
 			oponentTeam = new TeamData(startLifePoint);
 		}
 
+		/*///////////////////////////////*/
+		/*                               */
+		/*       Raycast Do Action       */
+		/*                               */
+		/*///////////////////////////////*/
+
 		private void PlayerCamera_OnRay(RaycastHit obj)
 		{
-			Piece piece = obj.transform.GetComponent<Piece>();
+			doActionOnRay?.Invoke(obj);
+		}
+
+		private void DoCheckForMove(RaycastHit obj)
+		{
+			Piece raycastPiece = obj.transform.parent.GetComponent<Piece>();
+
+			Vector2Int pos = m_grid.WorldToGrid(obj.transform.position); ;
+
+			if (raycastPiece && raycastPiece.Team == CurrentTurn)
+			{
+				//When select another piece
+				SelectPiece(raycastPiece);
+				SetSelectedTile(m_grid.GridToWorld(pos));
+				return;
+			}
+
+			if (!moves.Contains(pos)) return;
+
+			currentSelectedPiece.transform.position = m_grid.GridToWorld(pos);
+			currentSelectedPiece = null;
+			doActionOnRay = DoMoveOrPlace;
+		}
+
+		/// <summary>
+		/// If a square is selected, open piece add UI
+		/// 
+		/// If a piece is selected, select and set mode DoCheckForMove
+		/// </summary>
+		/// <param name="obj"></param>
+		private void DoMoveOrPlace(RaycastHit obj)
+		{
+			Piece piece = obj.transform.parent.GetComponent<Piece>();
 
 			Vector3 pos;
 
+			if (piece && piece.Team != CurrentTurn) return;
+
+			UnSelectPiece();
+
 			if (piece)
 			{
-				//Move a piece
-				pos = m_grid.GridToWord(m_grid.WorldToGrid(obj.transform.position));
-
-				List<Vector2Int> moves = piece.GetMouvement(m_grid);
-				m_playerCamera.SetStatePlacePiece();
-
-				for (int i = moves.Count - 1; i >= 0; i--)
-				{
-					ParticleSystem item = Instantiate(m_particleAvailableMovePrefab);
-					item.transform.position = m_grid.GridToWord(moves[i]);
-					item.Play();
-					particleAvailableMoveList.Add(item); ;
-				}
+				//Select a piece
+				pos = SelectPiece(piece);
 			}
 			else
 			{
 				//Place a piece
-				pos = m_grid.GridToWord(m_grid.WorldToGrid(obj.point));
+				pos = m_grid.GridToWorld(m_grid.WorldToGrid(obj.point));
 
 				doAction = null;
 
@@ -103,19 +140,21 @@ namespace Com.Github.Knose1.MiniJam61
 				m_piecePlacingUi.Show(PiecePlacingUi_ResolveInput, allowedInputs, CurrentTurn);
 			}
 
-			m_particleCurrentTile.gameObject.SetActive(true);
-			m_particleCurrentTile.Play();
-
-			m_particleCurrentTile.transform.position = pos;
+			SetSelectedTile(pos);
 		}
 
 		private void PiecePlacingUi_ResolveInput(PiecePlacingUI.PlacingInput obj)
 		{
 			if (obj != PiecePlacingUI.PlacingInput.Nothing) SetNextTurn();
 			doAction = DoTurn;
-			m_particleCurrentTile.Stop();
-			m_particleCurrentTile.gameObject.SetActive(false);
+			UnsetSelectedTile();
 		}
+
+		/*///////////////////////////////*/
+		/*                               */
+		/*           Do Action           */
+		/*                               */
+		/*///////////////////////////////*/
 
 		private void Update()
 		{
@@ -127,7 +166,78 @@ namespace Com.Github.Knose1.MiniJam61
 		{
 			m_playerCamera.ManualUpdate();
 		}
+		private void DoTurnWithSelection()
+		{
+			DoTurn();
+			if (m_controller.EscapeDown)
+			{
+				UnSelectPiece();
+				UnsetSelectedTile();
+
+				doAction = DoTurn;
+				doActionOnRay = DoMoveOrPlace;
+			}
+		}
+
+		/*///////////////////////////////*/
+		/*                               */
+		/*           Next Turn           */
+		/*                               */
+		/*///////////////////////////////*/
 
 		private void SetNextTurn() => CurrentTurn = (GameTeam)(((int)CurrentTurn + 1) % 2);
+
+
+		/*///////////////////////////////*/
+		/*                               */
+		/*           Selection           */
+		/*                               */
+		/*///////////////////////////////*/
+
+		private void UnSelectPiece()
+		{
+			for (int i = particleAvailableMoveList.Count - 1; i >= 0; i--)
+			{
+				Destroy(particleAvailableMoveList[i]);
+				particleAvailableMoveList.RemoveAt(i);
+			}
+			currentSelectedPiece = null;
+			moves = null;
+		}
+
+		private Vector3 SelectPiece(Piece piece)
+		{
+			UnSelectPiece();
+			Vector3 pos = m_grid.GridToWorld(m_grid.WorldToGrid(piece.transform.position));
+			currentSelectedPiece = piece;
+			doActionOnRay = DoCheckForMove;
+
+			doAction = DoTurnWithSelection;
+
+			moves = piece.GetMouvement(m_grid);
+			for (int i = moves.Count - 1; i >= 0; i--)
+			{
+				ParticleSystem item = Instantiate(m_particleAvailableMovePrefab);
+				item.transform.position = m_grid.GridToWorld(moves[i]);
+				item.Play();
+				particleAvailableMoveList.Add(item);
+			}
+
+			return pos;
+		}
+
+		private void UnsetSelectedTile()
+		{
+			m_particleCurrentTile.Stop();
+			m_particleCurrentTile.gameObject.SetActive(false);
+		}
+
+		private void SetSelectedTile(Vector3 pos)
+		{
+			m_particleCurrentTile.gameObject.SetActive(true);
+			m_particleCurrentTile.Play();
+
+			m_particleCurrentTile.transform.position = pos;
+		}
 	}
 }

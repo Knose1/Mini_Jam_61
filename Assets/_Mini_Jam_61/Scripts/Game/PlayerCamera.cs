@@ -57,19 +57,6 @@ namespace Com.Github.Knose1.MiniJam61.Game
 
 		}
 
-		public void SetStatePlacePiece() => doAction = DoActionPlacePiece;
-		private void DoActionPlacePiece()
-		{
-			if (m_controller.MouseLeftClick)
-			{
-				RaycastHit? hit = Ray();
-				if (hit.HasValue)
-				{
-					OnRay(hit.Value);
-				}
-			}
-		}
-
 		public void SetStateVoid() => doAction = null;
 		
 
@@ -90,8 +77,13 @@ namespace Com.Github.Knose1.MiniJam61.Game
 
 		private RaycastHit? Ray()
 		{
+			Ray ray = m_camera.ScreenPointToRay(Input.mousePosition);
+
 			float cameraRadius = -m_camera.transform.localPosition.z;
-			if (Physics.Raycast(m_camera.ScreenPointToRay(Input.mousePosition), out RaycastHit hitInfo , ADD_RAY_DISTANCE + cameraRadius, m_layerMask)) 
+			float distance = ADD_RAY_DISTANCE + cameraRadius;
+
+			Debug.DrawRay(ray.origin, ray.direction * distance, Color.red, 2);
+			if (Physics.Raycast(ray, out RaycastHit hitInfo , distance, m_layerMask)) 
 			{
 				return hitInfo;
 			}

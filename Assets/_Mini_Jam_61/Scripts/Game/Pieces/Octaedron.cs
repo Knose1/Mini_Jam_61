@@ -20,9 +20,19 @@ namespace Com.Github.Knose1.MiniJam61.Game.Pieces
 			{
 				for (int y = -1; y <= 1; y++)
 				{
+					if (x == y && x == 0) continue;
 					if (Mathf.Abs(x) == Mathf.Abs(y)) continue;
-					Vector2Int movePos = new Vector2Int(x, y) + pos;
-					if (grid.IsPosInsideGrid(movePos)) moves.Add(movePos);
+					Vector2Int finalPos = new Vector2Int(x, y) + pos;
+					if (grid.IsPosInsideGrid(finalPos))
+					{
+						Piece piece = grid.GetPieceAt(finalPos);
+						if (piece)
+						{
+							if (piece.Team != Team) moves.Add(finalPos);
+							break;
+						}
+						moves.Add(finalPos);
+					}
 				}
 			}
 

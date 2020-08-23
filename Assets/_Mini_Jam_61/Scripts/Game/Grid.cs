@@ -47,9 +47,9 @@ namespace Com.Github.Knose1.MiniJam61
 		public bool IsPosInsideGrid(Vector2Int pos)
 		{
 			return
-				pos.x >= 0 && pos.x <= m_size.x
+				pos.x >= 0 && pos.x < m_size.x
 				&&
-				pos.y >= 0 && pos.y <= m_size.y
+				pos.y >= 0 && pos.y < m_size.y
 			;
 		}
 
@@ -63,7 +63,7 @@ namespace Com.Github.Knose1.MiniJam61
 			return Vector2Int.RoundToInt(new Vector2(pos.x, pos.z));
 		}
 
-		public Vector3 GridToWord(Vector2Int pos)
+		public Vector3 GridToWorld(Vector2Int pos)
 		{
 			return new Vector3(pos.x, 0, pos.y);
 		}
