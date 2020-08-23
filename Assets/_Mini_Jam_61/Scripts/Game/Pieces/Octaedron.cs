@@ -21,7 +21,8 @@ namespace Com.Github.Knose1.MiniJam61.Game.Pieces
 				for (int y = -1; y <= 1; y++)
 				{
 					if (x == y && x == 0) continue;
-					if (Mathf.Abs(x) == Mathf.Abs(y)) continue;
+					//if (Mathf.Abs(x) == Mathf.Abs(y)) continue;
+					
 					Vector2Int finalPos = new Vector2Int(x, y) + pos;
 					if (grid.IsPosInsideGrid(finalPos))
 					{
@@ -29,7 +30,7 @@ namespace Com.Github.Knose1.MiniJam61.Game.Pieces
 						if (piece)
 						{
 							if (piece.Team != Team) moves.Add(finalPos);
-							break;
+							continue;
 						}
 						moves.Add(finalPos);
 					}
