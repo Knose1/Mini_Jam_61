@@ -10,6 +10,7 @@ using UnityEngine.UI;
 
 namespace Com.Github.Knose1.MiniJam61.UI
 {
+	[RequireComponent(typeof(Animator))]
 	public class PiecePlacingUI : MonoBehaviour
 	{
 		[SerializeField] private Button m_cubeBtn = null;
@@ -19,6 +20,8 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		[SerializeField] private Controller m_controller = null;
 		[SerializeField] private ColorSettings m_colorSettings = null;
 		[SerializeField] private Image m_background = null;
+
+		private Animator animator;
 
 		private Action<PlacingInput> onInput;
 
@@ -37,6 +40,9 @@ namespace Com.Github.Knose1.MiniJam61.UI
 		public void Show(Action<PlacingInput> onInput, PlacingInput allowedInputs, GameTeam currentPlayer)
 		{
 			UIContainer.Instance.Add(gameObject, true, UIContainer.ActionOnClose.unactivate);
+
+			if (!animator) animator = GetComponent<Animator>();
+			animator.SetTrigger("show");
 
 			this.onInput = onInput;
 			doAction = DoActionCheckForInput;
@@ -65,7 +71,9 @@ namespace Com.Github.Knose1.MiniJam61.UI
 
 		public void Hide()
 		{
-			UIContainer.Instance.Close(gameObject);
+			if (!isActiveAndEnabled) return;
+
+			animator.SetTrigger("hide");
 
 			doAction = null;
 			onInput = null;
@@ -74,13 +82,17 @@ namespace Com.Github.Knose1.MiniJam61.UI
 			m_pyramideBtn.onClick.RemoveListener(PyramideBtn_OnClick);
 			m_octahedronBtn.onClick.RemoveListener(OctahedronBtn_OnClick);
 		}
+		public void HideInstant()
+		{
+			UIContainer.Instance.Close(gameObject);
+		}
 
 		private void CubeBtn_OnClick() => SendOnInputAndSleep(PlacingInput.Cube);
 		private void PyramideBtn_OnClick() => SendOnInputAndSleep(PlacingInput.Pyramide);
 		private void OctahedronBtn_OnClick() => SendOnInputAndSleep(PlacingInput.Octahedron);
 		private void DoActionCheckForInput()
 		{
-			if (m_controller.EscapeDown || m_controller.MouseRightDown)
+			if (m_controller.EscapeDown)
 			{
 				SendOnInputAndSleep(PlacingInput.Nothing);
 			}
@@ -95,6 +107,10 @@ namespace Com.Github.Knose1.MiniJam61.UI
 			_temp(inp);
 		}
 
+		private void Awake()
+		{
+			animator = GetComponent<Animator>();
+		}
 
 		private void Update()
 		{

@@ -48,8 +48,14 @@ MonoBehaviour:
   - _EmissionColor
   m_material: {fileID: 2100000, guid: 94307183f798d6643b07d40e087126c6, type: 2}
   m_team: 0
+  m_piecesSettings: {fileID: 11400000, guid: d25ee3f9e80d9474c883dd6f8dd95a2f, type: 2}
   m_settings: {fileID: 11400000, guid: c885a557e8024f24299561145b2904c9, type: 2}
   m_renderer: {fileID: 5656691689766422103}
+  m_innerObject: {fileID: 5656691689766422105}
+  m_normalKillDuration: 0.3
+  m_suicideDuration: 1
+  m_normalKillEndPos: -40
+  m_suicideEndPos: 2
 --- !u!1 &5656691689766422106
 GameObject:
   m_ObjectHideFlags: 0

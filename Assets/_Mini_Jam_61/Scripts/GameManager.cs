@@ -2,6 +2,7 @@
 using Com.Github.Knose1.MiniJam61.Game.Base;
 using Com.Github.Knose1.MiniJam61.Settings;
 using Com.Github.Knose1.MiniJam61.UI;
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,25 +12,39 @@ namespace Com.Github.Knose1.MiniJam61
 {
 	public class GameManager : MonoBehaviour
 	{
-		public delegate bool OnPlayerChangeDelegate(GameTeam currentPlayerTurn);
+		private static GameManager _instance = null;
+		public static GameManager Instance => _instance = _instance ?? FindObjectOfType<GameManager>();
+
+		public delegate void OnPlayerChangeDelegate(GameTeam currentPlayerTurn, TeamData teamData);
 		public static event OnPlayerChangeDelegate OnPlayerChange;
+
+		public delegate void OnSelectedPieceChangeDelegate(Piece currentSelectedPiece);
+		public static event OnSelectedPieceChangeDelegate OnSelectedPieceChange;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns>If true, rematch</returns>
 		public delegate bool OnEndDelegate(GameTeam winner);
+
 		public static event OnEndDelegate OnEnd;
 
 		[SerializeField] private float startLifePoint = 10f;
+
+		[SerializeField] private Vector2Int m_startGridSize = new Vector2Int(5,5);
+		[SerializeField] private Vector2Int m_expandSize = new Vector2Int(2,2);
+		[SerializeField] private List<int> m_piecesRequiredRequiredForExpand = new List<int>() { 7, 9, 12, 15, 20, 32, 45 };
+		[SerializeField] private float m_resizeTwinDuration = 0.25f;
+		[SerializeField] private float m_moveTwinDuration = 0.5f;
+		public float MoveTwinDuration => m_moveTwinDuration;
 
 		[SerializeField] private Controller m_controller = null;
 		[SerializeField] private PlayerCamera m_playerCamera = null;
 		[SerializeField] private Grid m_grid = null;
 
-		[SerializeField] private Piece m_cubePrefab;
-		[SerializeField] private Piece m_pyramidePrefab;
-		[SerializeField] private Piece m_octahedronPrefab;
+		[SerializeField] private Piece m_cubePrefab = null;
+		[SerializeField] private Piece m_pyramidePrefab = null;
+		[SerializeField] private Piece m_octahedronPrefab = null;
 
 		[SerializeField] private PiecePlacingUI m_piecePlacingUi = default;
 		[SerializeField] private PieceSettings m_pieceSetting = default;
@@ -37,9 +52,10 @@ namespace Com.Github.Knose1.MiniJam61
 		[SerializeField] private ParticleSystem m_particleAvailableMovePrefab = default;
 		[SerializeField] private ParticleSystem m_particleCurrentTile = default;
 
+		[SerializeField] private List<Piece> m_pieces = new List<Piece>();
+
 		List<ParticleSystem> particleAvailableMoveList = new List<ParticleSystem>();
 
-		Action doAction;
 		GameTeam _currentTurn = GameTeam.Player;
 		GameTeam CurrentTurn
 		{
@@ -47,30 +63,65 @@ namespace Com.Github.Knose1.MiniJam61
 			set
 			{
 				_currentTurn = value;
-				OnPlayerChange?.Invoke(_currentTurn);
+				OnPlayerChange?.Invoke(_currentTurn, CurrentTeam);
+
+				for (int i = m_grid.PiecesCount - 1; i >= 0; i--)
+				{
+					m_grid.Pieces[i].OnPlayerChange(_currentTurn);
+				}
 			}
 		}
 
 		TeamData playerTeam;
 		TeamData oponentTeam;
-
-		public TeamData CurrentTeam => _currentTurn == GameTeam.Player ? playerTeam : oponentTeam;
+		TeamData CurrentTeam => _currentTurn == GameTeam.Player ? playerTeam : oponentTeam;
 
 		List<Vector2Int> moves;
-		Piece currentSelectedPiece;
+		Piece _currentSelectedPiece;
+		Piece CurrentSelectedPiece
+		{
+			get => _currentSelectedPiece;
+			set
+			{
+				_currentSelectedPiece = value;
+				OnSelectedPieceChange?.Invoke(_currentSelectedPiece);
+			}
+		}
+
+		int nextExpantion = 0;
+		
 
 		private void Awake()
 		{
-			doAction = DoTurn;
 			m_playerCamera.OnRay += PlayerCamera_OnRay;
 			m_particleCurrentTile.gameObject.SetActive(false);
+
+			for (int i = m_pieces.Count - 1; i >= 0; i--)
+			{
+				m_pieces[i].gameObject.SetActive(false);
+			}
 		}
 
-		private void Start()
+		private void Start() => StartGame();
+		private void StartGame()
 		{
+			m_grid.Size = m_startGridSize;
 			m_playerCamera.SetStateNormal();
 			playerTeam = new TeamData(startLifePoint);
 			oponentTeam = new TeamData(startLifePoint);
+			nextExpantion = 0;
+
+			CurrentTurn = GameTeam.Player;
+
+			for (int i = m_pieces.Count - 1; i >= 0; i--)
+			{
+				Piece original = m_pieces[i];
+				Piece piece = Instantiate(original);
+				piece.gameObject.SetActive(true);
+				piece.TwinPlace(i);
+				m_grid.PlacePiece(piece, m_grid.WorldToGrid(original.transform));
+			}
+
 		}
 
 		/*///////////////////////////////*/
@@ -91,18 +142,21 @@ namespace Com.Github.Knose1.MiniJam61
 
 			if (piece) posGrid = m_grid.WorldToGrid(piece.transform);
 
-			m_piecePlacingUi.Hide();
 
 			if (moves != null && moves.Contains(posGrid))
 			{
+				m_piecePlacingUi.Hide();
+				//Move a piece
 				Piece pieceAtPose = m_grid.GetPieceAt(posGrid);
 				if (pieceAtPose)
 				{
 					pieceAtPose.Kill(m_grid, ref playerTeam, ref oponentTeam, false);
 				}
 
-				currentSelectedPiece.transform.position = m_grid.GridToWorld(posGrid);
-				currentSelectedPiece = null;
+				CurrentSelectedPiece.transform.DOMove(m_grid.GridToWorld(posGrid), m_moveTwinDuration);
+				CurrentSelectedPiece = null;
+
+				CurrentTeam.lifePoint -= 1;
 
 				UnSelectPiece();
 				UnsetSelectedTile();
@@ -110,6 +164,7 @@ namespace Com.Github.Knose1.MiniJam61
 			}
 			else if (piece && piece.Team == CurrentTurn)
 			{
+				m_piecePlacingUi.Hide();
 				UnSelectPiece();
 
 				//Select a piece
@@ -118,9 +173,10 @@ namespace Com.Github.Knose1.MiniJam61
 			}
 			else if (!piece)
 			{
+				m_piecePlacingUi.Hide();
 				UnSelectPiece();
 
-				//Place a piece
+				//Select a tile for placing
 				pos = ModeAddAPiece(obj);
 				SetSelectedTile(pos);
 			}
@@ -134,14 +190,17 @@ namespace Com.Github.Knose1.MiniJam61
 			{
 				case PiecePlacingUI.PlacingInput.Cube:
 					piece = Instantiate(m_cubePrefab);
+					piece.TwinPlace(0);
 					CurrentTeam.lifePoint -= m_pieceSetting.CubeCost;
 					break;
 				case PiecePlacingUI.PlacingInput.Pyramide:
 					piece = Instantiate(m_pyramidePrefab);
+					piece.TwinPlace(0);
 					CurrentTeam.lifePoint -= m_pieceSetting.TriangleCost;
 					break;
 				case PiecePlacingUI.PlacingInput.Octahedron:
 					piece = Instantiate(m_octahedronPrefab);
+					piece.TwinPlace(0);
 					CurrentTeam.lifePoint -= m_pieceSetting.OctahedronCost;
 					break;
 			}
@@ -154,8 +213,19 @@ namespace Com.Github.Knose1.MiniJam61
 
 			if (inp != PiecePlacingUI.PlacingInput.Nothing) SetNextTurn();
 
-			doAction = DoTurn;
 			UnsetSelectedTile();
+
+			if (nextExpantion < m_piecesRequiredRequiredForExpand.Count && m_grid.PiecesCount >= m_piecesRequiredRequiredForExpand[nextExpantion])
+			{
+				m_playerCamera.SetStateVoid();
+				
+				DOTween.To(() => m_grid.Size, (Vector2 v) => m_grid.Size = v, m_grid.Size + m_expandSize, m_resizeTwinDuration).onComplete += () => {
+
+					m_playerCamera.SetStateNormal();
+				};
+				nextExpantion += 1;
+				return;
+			}
 		}
 
 		/*///////////////////////////////*/
@@ -167,22 +237,11 @@ namespace Com.Github.Knose1.MiniJam61
 		private void Update()
 		{
 			m_playerCamera.Controller.UpdateControles();
-			doAction?.Invoke();
-		}
-
-		private void DoTurn()
-		{
 			m_playerCamera.ManualUpdate();
-		}
-		private void DoTurnWithSelection()
-		{
-			DoTurn();
 			if (m_controller.EscapeDown)
 			{
 				UnSelectPiece();
 				UnsetSelectedTile();
-
-				doAction = DoTurn;
 			}
 		}
 
@@ -204,8 +263,7 @@ namespace Com.Github.Knose1.MiniJam61
 		private Vector3 ModeAddAPiece(RaycastHit obj)
 		{
 			Vector3 pos = m_grid.GridToWorld(m_grid.WorldToGrid(obj.point));
-			//doAction = null;
-
+			
 			PiecePlacingUI.PlacingInput allowedInputs = PiecePlacingUI.PlacingInput.Nothing;
 
 			if (CurrentTeam.lifePoint - m_pieceSetting.CubeCost > 0)
@@ -242,6 +300,14 @@ namespace Com.Github.Knose1.MiniJam61
 		/*                               */
 		/*///////////////////////////////*/
 
+		public void KillCurrentSelectedPieceWithEffects()
+		{
+			CurrentSelectedPiece.Kill(m_grid, ref playerTeam, ref oponentTeam, true);
+			UnSelectPiece();
+			UnsetSelectedTile();
+			SetNextTurn();
+		}
+
 		private void UnSelectPiece()
 		{
 			for (int i = particleAvailableMoveList.Count - 1; i >= 0; i--)
@@ -249,7 +315,7 @@ namespace Com.Github.Knose1.MiniJam61
 				Destroy(particleAvailableMoveList[i].gameObject);
 				particleAvailableMoveList.RemoveAt(i);
 			}
-			currentSelectedPiece = null;
+			CurrentSelectedPiece = null;
 			moves = null;
 		}
 
@@ -257,9 +323,7 @@ namespace Com.Github.Knose1.MiniJam61
 		{
 			UnSelectPiece();
 			Vector3 pos = m_grid.GridToWorld(m_grid.WorldToGrid(piece.transform.position));
-			currentSelectedPiece = piece;
-
-			doAction = DoTurnWithSelection;
+			CurrentSelectedPiece = piece;
 
 			moves = piece.GetMouvement(m_grid);
 			for (int i = moves.Count - 1; i >= 0; i--)

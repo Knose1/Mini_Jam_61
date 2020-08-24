@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Com.Github.Knose1.MiniJam61.Settings
 {
@@ -36,13 +37,15 @@ namespace Com.Github.Knose1.MiniJam61.Settings
 				y: Input.GetAxis(m_mouseY)
 			);
 
-			MouseLeftPressed = Input.GetButton(m_mouseLeft);
-			MouseLeftClick = Input.GetButtonUp(m_mouseLeft);
-			MouseLeftDown = Input.GetButtonDown(m_mouseLeft);
+			bool isUiClick = EventSystem.current.IsPointerOverGameObject();
+
+			MouseLeftPressed = Input.GetButton(m_mouseLeft) && !isUiClick;
+			MouseLeftClick = Input.GetButtonUp(m_mouseLeft) && !isUiClick;
+			MouseLeftDown = Input.GetButtonDown(m_mouseLeft) && !isUiClick;
 			
-			MouseRightPressed = Input.GetButton(m_mouseRight);
-			MouseRightClick = Input.GetButtonUp(m_mouseRight);
-			MouseRightDown = Input.GetButtonDown(m_mouseRight);
+			MouseRightPressed = Input.GetButton(m_mouseRight) && !isUiClick;
+			MouseRightClick = Input.GetButtonUp(m_mouseRight) && !isUiClick;
+			MouseRightDown = Input.GetButtonDown(m_mouseRight) && !isUiClick;
 
 			EscapePressed = Input.GetKey(m_escape);
 			EscapeUp = Input.GetKeyUp(m_escape);

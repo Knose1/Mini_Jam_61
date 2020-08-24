@@ -10,6 +10,11 @@ namespace Com.Github.Knose1.MiniJam61.Game.Pieces
 {
 	public class Octaedron : Piece
 	{
+		public override int CalculatePieceMultiple()
+		{
+			return Mathf.FloorToInt(Mathf.Min(m_piecesSettings.OctahedronGivesMultiple * turnsSinceCreated, m_piecesSettings.OctahedronGivesMax));
+		}
+
 		public override List<Vector2Int> GetMouvement(Grid grid)
 		{
 			List<Vector2Int> moves = new List<Vector2Int>();

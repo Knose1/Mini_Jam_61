@@ -17,21 +17,31 @@ namespace Com.Github.Knose1.MiniJam61.Game
 		[SerializeField] protected Camera m_camera;
 		[SerializeField] protected Transform m_cameraRotationUp;
 		[SerializeField] protected Transform m_cameraRotationLeft;
+
+		[Header("Rotation")]
 		[SerializeField] protected float m_cameraSpeed = 20;
-
-		private Action doAction;
-
 		[SerializeField] protected Vector2 rotation = default;
 		[SerializeField] protected Vector2 m_minRotation = default;
 		[SerializeField] protected Vector2 m_maxRotation = default;
 
+
+		[Header("Zoom")]
+		[SerializeField] protected float m_cameraZoomSpeed = 10;
+		[SerializeField] protected float m_cameraZoom = 2;
+		[SerializeField] protected float m_cameraMaxZoom = 2;
+		[SerializeField] protected float m_cameraMinZoom = 0.1f;
+
 		[SerializeField] protected LayerMask m_layerMask = default;
 
+		private Action doAction;
 		public Controller Controller => m_controller;
+
+		public bool IsStateVoid => doAction == null;
 
 		private void OnValidate()
 		{
 			Rotate();
+			Scroll();
 		}
 
 		public void ManualUpdate()
@@ -52,9 +62,23 @@ namespace Com.Github.Knose1.MiniJam61.Game
 			}
 			else if (m_controller.MouseRightPressed)
 			{
+				float speed = Time.deltaTime * m_cameraSpeed;
+				rotation += m_controller.MouseMove * speed;
 				Rotate();
 			}
 
+			float scroll = Input.mouseScrollDelta.y;
+			if (scroll != 0)
+			{
+				m_cameraZoom += scroll * Time.deltaTime * m_cameraZoomSpeed;
+				Scroll();
+			}
+		}
+
+		private void Scroll()
+		{
+			m_cameraZoom = Mathf.Clamp(m_cameraZoom, m_cameraMinZoom, m_cameraMaxZoom);
+			m_camera.transform.localPosition = new Vector3(0, 0, -m_cameraZoom);
 		}
 
 		public void SetStateVoid() => doAction = null;
@@ -62,9 +86,6 @@ namespace Com.Github.Knose1.MiniJam61.Game
 
 		private void Rotate()
 		{
-			float speed = Time.deltaTime * m_cameraSpeed;
-			rotation += m_controller.MouseMove * speed;
-
 			rotation.x %= 360;
 			rotation.y %= 360;
 

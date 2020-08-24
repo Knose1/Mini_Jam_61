@@ -8,21 +8,46 @@ namespace Com.Github.Knose1.MiniJam61
 {
 	public class Grid : MonoBehaviour
 	{
-		[SerializeField] protected Vector2Int m_size;
-		public Vector2Int Size {
+		[SerializeField] protected Vector2 m_size;
+		public Vector2 Size
+		{
 			get => m_size;
-			set => m_size = value;
+			set
+			{
+				Vector2 oldSize = m_size;
+
+				m_size = value;
+
+				Resize();
+
+				if (oldSize != value && oldSize != Vector2.zero)
+				{
+					int count = m_pieces.Count;
+					Vector2 end = (value - oldSize) / 2f;
+					for (int i = 0; i < count; i++)
+					{
+						m_pieces[i].transform.position += new Vector3(end.x, 0, end.y);
+					}
+				}
+			}
 		}
-		
+
 		[SerializeField] protected Transform m_board;
 		[SerializeField] protected Transform m_piece_container;
 
 		[SerializeField] protected List<Piece> m_pieces = new List<Piece>();
 
+		public List<Piece> Pieces => m_pieces;
+		public int PiecesCount => m_pieces.Count;
+
 		private void OnValidate()
 		{
 			if (!m_board) return;
+			Resize();
+		}
 
+		private void Resize()
+		{
 			m_board.localScale = new Vector3(m_size.x, (m_size.x + m_size.y) / 2f, m_size.y);
 			m_board.position = new Vector3(m_size.x - 1f, -1f, m_size.y - 1f) / 2;
 		}

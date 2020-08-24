@@ -9,10 +9,10 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{C92D6F99-A96F-2F79-D7EC-D3258708E03E}</ProjectGuid>
+    <ProjectGuid>{E4E3320F-50C1-A580-60FD-C48ED9641872}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>.</BaseDirectory>
@@ -47,7 +47,7 @@
   <PropertyGroup>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <UnityProjectGenerator>Unity/VSTU</UnityProjectGenerator>
-    <UnityProjectType>Game:1</UnityProjectType>
+    <UnityProjectType>GamePlugins:3</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>2019.4.0f1</UnityVersion>
   </PropertyGroup>
@@ -63,27 +63,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\_Common\Scripts\AnimateMaterialGiveToChild.cs" />
-    <Compile Include="Assets\_Common\Scripts\CodeInput.cs" />
-    <Compile Include="Assets\_Common\Scripts\RegexHelper.cs" />
-    <Compile Include="Assets\_Common\Scripts\ScaleMaterialSpriteWithObjectSize.cs" />
-    <Compile Include="Assets\_Common\Scripts\StringUtils.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Base\Piece.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\GameTeam.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Grid.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Cube.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Octaedron.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\Pieces\Pyramide.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\PlayerCamera.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Game\TileShow.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\GameManager.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Settings\ColorSettings.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Settings\Controller.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\Settings\PieceSettings.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\UI\Hud.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\UI\PiecePlacingUI.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\UI\UIContainer.cs" />
-    <Compile Include="Assets\_Mini_Jam_61\Scripts\UIManager.cs" />
+    <Compile Include="Assets\Plugins\Demigiant\DOTween\Modules\DOTweenModuleAudio.cs" />
+    <Compile Include="Assets\Plugins\Demigiant\DOTween\Modules\DOTweenModulePhysics.cs" />
+    <Compile Include="Assets\Plugins\Demigiant\DOTween\Modules\DOTweenModulePhysics2D.cs" />
+    <Compile Include="Assets\Plugins\Demigiant\DOTween\Modules\DOTweenModuleSprite.cs" />
+    <Compile Include="Assets\Plugins\Demigiant\DOTween\Modules\DOTweenModuleUI.cs" />
+    <Compile Include="Assets\Plugins\Demigiant\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
+    <Compile Include="Assets\Plugins\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
+    <None Include="Assets\Plugins\Demigiant\DOTween\readme.txt" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.0f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -718,12 +705,7 @@
       <HintPath>D:/UnityProject/Mini_Jam_61/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{E4E3320F-50C1-A580-60FD-C48ED9641872}</Project>
-      <Name>Assembly-CSharp-firstpass</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup></ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

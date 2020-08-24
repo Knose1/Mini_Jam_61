@@ -142,5 +142,11 @@ MonoBehaviour:
   - _EmissionColor
   m_material: {fileID: 2100000, guid: fd142ac2da8276b4386c426cc94c551d, type: 2}
   m_team: 0
+  m_piecesSettings: {fileID: 11400000, guid: d25ee3f9e80d9474c883dd6f8dd95a2f, type: 2}
   m_settings: {fileID: 11400000, guid: c885a557e8024f24299561145b2904c9, type: 2}
   m_renderer: {fileID: 2537471175177071738}
+  m_innerObject: {fileID: 2537471175177071736}
+  m_normalKillDuration: 0.3
+  m_suicideDuration: 1
+  m_normalKillEndPos: -40
+  m_suicideEndPos: 2
