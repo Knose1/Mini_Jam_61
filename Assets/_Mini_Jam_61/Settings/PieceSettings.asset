@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 487abcefbd0e400469eb5a2650f99d80, type: 3}
   m_Name: PieceSettings
   m_EditorClassIdentifier: 
-  m_octahedronCost: 1
-  m_triangleCost: 3
-  m_cubeCost: 5
+  m_octahedronCost: 3
+  m_triangleCost: 5
+  m_cubeCost: 7
   m_octahedronGivesMultiple: 1
   m_triangleGivesMultiple: 1.5
   m_cubeGivesMultiple: 2
-  m_octahedronGivesMax: 10
-  m_triangleGivesMax: 13
-  m_cubeGivesMax: 17
+  m_octahedronGivesMax: 99
+  m_triangleGivesMax: 99
+  m_cubeGivesMax: 99

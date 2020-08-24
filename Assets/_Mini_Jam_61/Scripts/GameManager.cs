@@ -239,8 +239,15 @@ namespace Com.Github.Knose1.MiniJam61
 				UnsetSelectedTile();
 			}
 
+			int piecesInMyTeam = m_grid.Pieces.FindAll((p) => { return p.Team == CurrentTurn; }).Count;
+			int lifeToCheck = 1;
+			if (piecesInMyTeam == 0)
+			{
+				lifeToCheck = (int)Mathf.Min(m_pieceSetting.CubeCost, m_pieceSetting.OctahedronCost, m_pieceSetting.TriangleCost);
+			}
+
 			TeamData dat = CurrentTeam;
-			if (dat.lifePoint <= 0)
+			if (dat.lifePoint < lifeToCheck)
 			{
 				OnEnd(dat == playerTeam ? GameTeam.Opponent : GameTeam.Player);
 				Destroy(gameObject);
@@ -268,21 +275,21 @@ namespace Com.Github.Knose1.MiniJam61
 			
 			PiecePlacingUI.PlacingInput allowedInputs = PiecePlacingUI.PlacingInput.Nothing;
 
-			if (CurrentTeam.lifePoint - m_pieceSetting.CubeCost > 0)
+			if (CurrentTeam.lifePoint - m_pieceSetting.CubeCost >= 0)
 			{
 				allowedInputs = (allowedInputs == PiecePlacingUI.PlacingInput.Nothing) ? 
 					PiecePlacingUI.PlacingInput.Cube : 
 					allowedInputs | PiecePlacingUI.PlacingInput.Cube;
 			}
 
-			if (CurrentTeam.lifePoint - m_pieceSetting.OctahedronCost > 0)
+			if (CurrentTeam.lifePoint - m_pieceSetting.OctahedronCost >= 0)
 			{
 				allowedInputs = (allowedInputs == PiecePlacingUI.PlacingInput.Nothing) ?
 					PiecePlacingUI.PlacingInput.Octahedron :
 					allowedInputs | PiecePlacingUI.PlacingInput.Octahedron;
 			}
 
-			if (CurrentTeam.lifePoint - m_pieceSetting.TriangleCost > 0)
+			if (CurrentTeam.lifePoint - m_pieceSetting.TriangleCost >= 0)
 			{
 				allowedInputs = (allowedInputs == PiecePlacingUI.PlacingInput.Nothing) ?
 					PiecePlacingUI.PlacingInput.Pyramide :
