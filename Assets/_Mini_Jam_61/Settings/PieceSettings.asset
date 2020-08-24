@@ -15,9 +15,9 @@ MonoBehaviour:
   m_octahedronCost: 1
   m_triangleCost: 3
   m_cubeCost: 5
-  m_octahedronGivesMultiple: 0.5
-  m_triangleGivesMultiple: 1
+  m_octahedronGivesMultiple: 1
+  m_triangleGivesMultiple: 1.5
   m_cubeGivesMultiple: 2
-  m_octahedronGivesMax: 5
-  m_triangleGivesMax: 7
-  m_cubeGivesMax: 11
+  m_octahedronGivesMax: 10
+  m_triangleGivesMax: 13
+  m_cubeGivesMax: 17

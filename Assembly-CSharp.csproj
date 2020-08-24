@@ -81,6 +81,7 @@
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Settings\Controller.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\Settings\PieceSettings.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\UI\Hud.cs" />
+    <Compile Include="Assets\_Mini_Jam_61\Scripts\UI\InfoScreen.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\UI\PiecePlacingUI.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\UI\UIContainer.cs" />
     <Compile Include="Assets\_Mini_Jam_61\Scripts\UIManager.cs" />

@@ -2,8 +2,8 @@
 {
 	public enum GameTeam
 	{
-		Opponent,
-		Player
+		Player,
+		Opponent
 	}
 
 	[System.Serializable]

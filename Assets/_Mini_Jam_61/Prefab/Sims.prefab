@@ -24,7 +24,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 94483292127883128}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -53,7 +53,7 @@ MonoBehaviour:
   m_renderer: {fileID: 5656691689766422103}
   m_innerObject: {fileID: 5656691689766422105}
   m_normalKillDuration: 0.3
-  m_suicideDuration: 1
+  m_suicideDuration: 0.5
   m_normalKillEndPos: -40
   m_suicideEndPos: 2
 --- !u!1 &5656691689766422106

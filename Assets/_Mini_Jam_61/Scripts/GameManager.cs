@@ -21,12 +21,7 @@ namespace Com.Github.Knose1.MiniJam61
 		public delegate void OnSelectedPieceChangeDelegate(Piece currentSelectedPiece);
 		public static event OnSelectedPieceChangeDelegate OnSelectedPieceChange;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns>If true, rematch</returns>
-		public delegate bool OnEndDelegate(GameTeam winner);
-
+		public delegate void OnEndDelegate(GameTeam winner);
 		public static event OnEndDelegate OnEnd;
 
 		[SerializeField] private float startLifePoint = 10f;
@@ -242,6 +237,13 @@ namespace Com.Github.Knose1.MiniJam61
 			{
 				UnSelectPiece();
 				UnsetSelectedTile();
+			}
+
+			TeamData dat = CurrentTeam;
+			if (dat.lifePoint <= 0)
+			{
+				OnEnd(dat == playerTeam ? GameTeam.Opponent : GameTeam.Player);
+				Destroy(gameObject);
 			}
 		}
 
